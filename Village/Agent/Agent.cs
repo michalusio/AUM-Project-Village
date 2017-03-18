@@ -16,11 +16,6 @@ namespace Village.Agent
             
         }
 
-        ~Agent()
-        {
-
-        }
-
         public double getStrength() => strength;
         public double getDurability() => durability;
         public double getSpeed() => speed;
