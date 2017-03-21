@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Board\Board.cs" />
     <Compile Include="Board\Field.cs" />
+    <Compile Include="Board\Food.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
