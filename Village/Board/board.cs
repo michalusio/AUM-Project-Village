@@ -20,7 +20,7 @@ namespace Village.Board
                 for (int j = 0; j <= y; j++)
                 {
                     p = generator.Next(1);
-                    if (p < ratio && GreenSize > 0 && GreenSize%2 ==1)
+                    if (p < ratio && GreenSize > 0)
                     {
                         fullBoard[i, j] = new Field(true);
                     }
