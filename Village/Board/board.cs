@@ -6,20 +6,22 @@ using System.Threading.Tasks;
 
 namespace Village.Board
 {
+    
     public class Board
     {
+        public Field[,] fullBoard;
         public Board(int x, int y, double ratio)//ratio- green to brown ground 
         {
-            int GreenSize = Convert.ToInt32(ratio * (x * y));
+            int GreenSize = (int)(ratio * (x * y));
             Random generator = new Random();
             
             Field[,] fullBoard = new Field[x, y];
             double p;
-            for (int i = 0; i <= x; i++)
+            for (int i = 0; i < x; i++)
             {
-                for (int j = 0; j <= y; j++)
+                for (int j = 0; j < y; j++)
                 {
-                    p = generator.Next(1);
+                    p = generator.NextDouble();
                     if (p < ratio && GreenSize > 0)
                     {
                         fullBoard[i, j] = new Field(true);
