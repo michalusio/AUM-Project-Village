@@ -12,8 +12,7 @@ namespace Village.Board
         {
             int GreenSize = Convert.ToInt32(ratio * (x * y));
             Random generator = new Random();
-            Field GField = new Field(true);
-            Field BField = new Field(false);
+            
             Field[,] fullBoard = new Field[x, y];
             double p;
             for (int i = 0; i <= x; i++)
@@ -23,10 +22,10 @@ namespace Village.Board
                     p = generator.Next(1);
                     if (p < ratio && GreenSize > 0 && GreenSize%2 ==1)
                     {
-                        fullBoard[i, j] = GField; 
+                        fullBoard[i, j] = new Field(true);
                     }
                     else
-                        fullBoard[i, j] = BField;
+                        fullBoard[i, j] = new Field(false);
 
                 }
             }
