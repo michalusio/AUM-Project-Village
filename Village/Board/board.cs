@@ -15,7 +15,7 @@ namespace Village.Board
             int GreenSize = (int)(ratio * (x * y));
             Random generator = new Random();
             
-            Field[,] fullBoard = new Field[x, y];
+            fullBoard = new Field[x, y];
             double p;
             for (int i = 0; i < x; i++)
             {
