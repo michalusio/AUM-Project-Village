@@ -1,38 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using System.Drawing;
+using Village.Genes;
 
 namespace Village.Board
 {
-    
     public class Board
     {
+        private const int NODE_COUNT = 5;
+
         public Field[,] fullBoard;
         public Board(int x, int y, double ratio)//ratio- green to brown ground 
         {
-            int GreenSize = (int)(ratio * (x * y));
-            Random generator = new Random();
+            int greenSize = (int)(ratio * (x * y));
             
             fullBoard = new Field[x, y];
-            double p;
+            Tuple<PointF,bool>[] nodes=new Tuple<PointF, bool>[NODE_COUNT];
+            for (int i = 0; i < nodes.Length; ++i)
+            {
+                nodes[i]=new Tuple<PointF, bool>(new PointF((float)Genome.Rnd.NextDouble()*x, (float)Genome.Rnd.NextDouble() * y), Genome.Rnd.NextDouble()>0.5);
+            }
             for (int i = 0; i < x; i++)
             {
                 for (int j = 0; j < y; j++)
                 {
-                    p = generator.NextDouble();
-                    if (p < ratio && GreenSize > 0)
+                    float dist = float.MaxValue;
+                    int nearestNode = -1;
+                    for (var index = 0; index < nodes.Length; index++)
                     {
-                        fullBoard[i, j] = new Field(true);
+                        var node = nodes[index];
+                        float dst = Sqr(node.Item1.X - i) + Sqr(node.Item1.Y - j);
+                        if (dst < dist)
+                        {
+                            dist = dst;
+                            nearestNode = index;
+                        }
                     }
-                    else
-                        fullBoard[i, j] = new Field(false);
-
+                    fullBoard[i,j]=new Field(nodes[nearestNode].Item2);
                 }
             }
         }
 
+        private float Sqr(float a)
+        {
+            return a * a;
+        }
     }
         
     
