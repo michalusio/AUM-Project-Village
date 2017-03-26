@@ -22,5 +22,10 @@ namespace Village.Board
             _cultivation = cultivation;
             isAgent = false;
         }
+
+        public bool getCultivation()
+        {
+            return _cultivation;
+        }
     }
 }

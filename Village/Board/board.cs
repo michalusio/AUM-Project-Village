@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
+using Village.Board;
 using Village.Genes;
+
 
 namespace Village.Board
 {

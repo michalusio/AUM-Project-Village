@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Village.Agent;
+using Village.Board;
+using Village.Genes;
 
 namespace Village.Genes
 {
