@@ -12,11 +12,12 @@ namespace Village.Agent
         //Age and Food
         private int age, food;
         //List of genomes
-        private readonly List<Tuple<Genes.Genome, float>> genome;
+        private List<Tuple<Genes.Genome, float>> genomeList;
+        private Genes.Genome genome;
 
         public Agent()
         {
-            Genes.Genome(genome);
+            genome = new Genes.Genome(getGenomeList);
         }
         
         //Getters
@@ -24,6 +25,7 @@ namespace Village.Agent
         public int getCurrentY => currentCoordinates[1];
         public int getAge => age;
         public int getFood => food;
+        public List<Tuple<Genes.Genome, float>> getGenomeList => genomeList;
         
         //Setters
         public void setCoordinates(int X, int Y)
