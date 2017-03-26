@@ -10,18 +10,18 @@ namespace Village.Genes
     {
         public const int GENE_COUNT = 5;
 
-        private readonly List<Func<Agent, Board.Board, object>> _genes;
+        private readonly List<Func<Agent.Agent, Board.Board, object>> _genes;
 
         public Chromosome(List<Tuple<Chromosome, float>> chromosome, float sum)
         {
-            _genes=new List<Func<Agent, Board.Board, object>>(GENE_COUNT);
+            _genes=new List<Func<Agent.Agent, Board.Board, object>>(GENE_COUNT);
             for (int i = 0; i < GENE_COUNT; ++i)
             {
                 _genes.Add(getRandomGene(chromosome,i, sum));
             }
         }
 
-        private Func<Agent, Board.Board, object> getRandomGene(List<Tuple<Chromosome, float>> chromosome, int i, float sum)
+        private Func<Agent.Agent, Board.Board, object> getRandomGene(List<Tuple<Chromosome, float>> chromosome, int i, float sum)
         {
             float result = (float) Genome.Rnd.NextDouble()*sum;
             foreach (var t in chromosome)
@@ -35,7 +35,7 @@ namespace Village.Genes
             return chromosome[chromosome.Count-1].Item1._genes[i];
         }
 
-        private Func<Agent, Board.Board, object> mutationGene(int i)
+        private Func<Agent.Agent, Board.Board, object> mutationGene(int i)
         {
             return null;
         }

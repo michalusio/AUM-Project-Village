@@ -42,6 +42,7 @@
             this.ui.Size = new System.Drawing.Size(100, 50);
             this.ui.TabIndex = 0;
             this.ui.TabStop = false;
+            this.ui.Paint += new System.Windows.Forms.PaintEventHandler(this.ui_Paint);
             // 
             // timer
             // 
@@ -54,7 +55,7 @@
             this.ClientSize = new System.Drawing.Size(684, 461);
             this.Controls.Add(this.ui);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Village Project";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.ui)).EndInit();
