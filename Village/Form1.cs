@@ -26,6 +26,19 @@ namespace Village
             sizeRect = 3;
 
             board = new Village.Board.Board(50, 50, 2);
+
+            timer.Enabled = true;
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            ui.Width = Width;
+            ui.Height = Height;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            ui.Invalidate();
         }
 
         private void ui_Paint(object sender, PaintEventArgs e)
