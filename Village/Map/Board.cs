@@ -1,21 +1,17 @@
 using System;
 using System.Drawing;
-using Village.Board;
 using Village.Genes;
 
-
-namespace Village.Board
+namespace Village.Map
 {
     public class Board
     {
         private const int NODE_COUNT = 5;
 
-        public Field[,] fullBoard;
-        public Board(int x, int y, double ratio)//ratio- green to brown ground 
+        public Field[,] FullBoard;
+        public Board(int x, int y)
         {
-            int greenSize = (int)(ratio * (x * y));
-            
-            fullBoard = new Field[x, y];
+            FullBoard = new Field[x, y];
             Tuple<PointF,bool>[] nodes=new Tuple<PointF, bool>[NODE_COUNT];
             for (int i = 0; i < nodes.Length; ++i)
             {
@@ -37,12 +33,12 @@ namespace Village.Board
                             nearestNode = index;
                         }
                     }
-                    fullBoard[i,j]=new Field(nodes[nearestNode].Item2);
+                    FullBoard[i,j]=new Field(nodes[nearestNode].Item2);
                 }
             }
         }
 
-        private float Sqr(float a)
+        private static float Sqr(float a)
         {
             return a * a;
         }
