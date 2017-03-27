@@ -1,4 +1,7 @@
-﻿namespace Village
+﻿using System;
+using System.Windows.Forms;
+
+namespace Village
 {
     partial class Form1
     {
@@ -46,6 +49,8 @@
             // 
             // timer
             // 
+            this.timer.Enabled = true;
+            this.timer.Interval = 16;
             this.timer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
@@ -54,10 +59,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 461);
             this.Controls.Add(this.ui);
+            this.DoubleBuffered = true;
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Village Project";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseWheel);
             ((System.ComponentModel.ISupportInitialize)(this.ui)).EndInit();
             this.ResumeLayout(false);
 

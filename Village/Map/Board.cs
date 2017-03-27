@@ -6,7 +6,7 @@ namespace Village.Map
 {
     public class Board
     {
-        private const int NODE_COUNT = 25;
+        private const int NODE_COUNT = 500;
 
         public Field[,] FullBoard;
         public Board(int x, int y)

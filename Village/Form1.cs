@@ -7,9 +7,13 @@ namespace Village
 {
     public partial class Form1 : Form
     {
-        private Board board;
-        private PointF Camera;
-        private int sizeRect;
+        private const float CAMERA_SPEED = 5;
+
+        private Board _board;
+        private PointF _camera;
+        private float _zoom;
+        private PointF _moveDir;
+        private int _sizeRect;
 
         public Form1()
         {
@@ -21,12 +25,11 @@ namespace Village
             ui.Width = ClientSize.Width;
             ui.Height = ClientSize.Height;
 
-            Camera =new PointF(0,0);
-            sizeRect = 16;  //size for one field
+            _camera = PointF.Empty;
+            _zoom = 1;
+            _sizeRect = 16;  //size for one field
 
-            board = new Board(50, 50);
-
-            timer.Enabled = true;
+            _board = new Board(100, 100);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -37,26 +40,56 @@ namespace Village
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            _camera.X += _moveDir.X;
+            _camera.Y += _moveDir.Y;
             ui.Invalidate();
         }
 
         private void ui_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            Size s = new Size(sizeRect, sizeRect);
-            for (int i = 0; i < board.FullBoard.GetLength(1); i++)
+            SizeF s = new SizeF(_sizeRect * _zoom, _sizeRect * _zoom);
+            for (int i = 0; i < _board.FullBoard.GetLength(1); i++)
             {
-                for (int j = 0; j < board.FullBoard.GetLength(0); j++)
+                for (int j = 0; j < _board.FullBoard.GetLength(0); j++)
                 {
                     g.FillRectangle(
-                        board.FullBoard[j, i].getCultivation() ? Brushes.Green : Brushes.SaddleBrown,
-                        j * sizeRect - Camera.X,
-                        i * sizeRect - Camera.Y,
+                        _board.FullBoard[j, i].getCultivation() ? Brushes.Green : Brushes.SaddleBrown,
+                        ((j - _board.FullBoard.GetLength(0)) * _sizeRect - _camera.X) * _zoom + e.ClipRectangle.Width * 0.5f,
+                        ((i - _board.FullBoard.GetLength(1)) * _sizeRect - _camera.Y) * _zoom + e.ClipRectangle.Height * 0.5f,
                         s.Width,
                         s.Height);
                 }
             }
 
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up) _moveDir.Y = -CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.Down) _moveDir.Y = CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.Left) _moveDir.X = -CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.Right) _moveDir.X = CAMERA_SPEED / _zoom;
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up) _moveDir.Y = 0;
+            if (e.KeyCode == Keys.Down) _moveDir.Y = 0;
+            if (e.KeyCode == Keys.Left) _moveDir.X = 0;
+            if (e.KeyCode == Keys.Right) _moveDir.X = 0;
+        }
+
+        private void Form1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta < 0)
+            {
+                _zoom *= 0.9f;
+            }
+            if (e.Delta > 0)
+            {
+                if (_zoom * 1.1f <= 1) _zoom *= 1.1f;
+            }
         }
     }
 }
