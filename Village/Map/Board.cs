@@ -2,16 +2,15 @@ using System;
 using System.Drawing;
 using Village.Genes;
 
-namespace Village.Board
+namespace Village.Map
 {
     public class Board
     {
         private const int NODE_COUNT = 5;
 
         public Field[,] FullBoard;
-        public Board(int x, int y)//ratio- green to brown ground 
+        public Board(int x, int y)
         {
-            
             FullBoard = new Field[x, y];
             Tuple<PointF,bool>[] nodes=new Tuple<PointF, bool>[NODE_COUNT];
             for (int i = 0; i < nodes.Length; ++i)

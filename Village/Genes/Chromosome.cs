@@ -1,24 +1,26 @@
 using System;
 using System.Collections.Generic;
+using Village.Agents;
+using Village.Map;
 
 namespace Village.Genes
 {
     public class Chromosome
     {
-        public const int GENE_COUNT = 5;
+        public const int GeneCount = 5;
 
-        private readonly List<Func<Agent, Board.Board, object>> _genes;
+        private readonly List<Func<Agent, Board, object>> _genes;
 
-        public Chromosome(List<Tuple<Chromosome, float>> chromosome, float sum)
+        public Chromosome(IReadOnlyList<Tuple<Chromosome, float>> chromosome, float sum)
         {
-            _genes=new List<Func<Agent, Board.Board, object>>(GENE_COUNT);
-            for (int i = 0; i < GENE_COUNT; ++i)
+            _genes=new List<Func<Agent, Board, object>>(GeneCount);
+            for (int i = 0; i < GeneCount; ++i)
             {
-                _genes.Add(getRandomGene(chromosome,i, sum));
+                _genes.Add(GetRandomGene(chromosome,i, sum));
             }
         }
 
-        private Func<Agent, Board.Board, object> getRandomGene(List<Tuple<Chromosome, float>> chromosome, int i, float sum)
+        private static Func<Agent, Board, object> GetRandomGene(IReadOnlyList<Tuple<Chromosome, float>> chromosome, int i, float sum)
         {
             float result = (float) Genome.Rnd.NextDouble()*sum;
             foreach (var t in chromosome)
@@ -26,13 +28,13 @@ namespace Village.Genes
                 result -= t.Item2;
                 if (result <= 0)
                 {
-                    return Genome.Rnd.NextDouble() < Genome.MUTATION_CHANCE ? mutationGene(i) : t.Item1._genes[i];
+                    return Genome.Rnd.NextDouble() < Genome.MutationChance ? MutationGene(i) : t.Item1._genes[i];
                 }
             }
             return chromosome[chromosome.Count-1].Item1._genes[i];
         }
 
-        private Func<Agent, Board.Board, object> mutationGene(int i)
+        private static Func<Agent, Board, object> MutationGene(int i)
         {
             return null;
         }
