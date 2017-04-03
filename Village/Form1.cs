@@ -21,11 +21,11 @@ namespace Village
             ui.Width = Width;
             ui.Height = Height;
 
-            paddingX = 5;   //padding for PictureBox
-            paddingY = 5;   //
-            sizeRect = 20;  //size for one field
+            paddingX = 5;
+            paddingY = 5;
+            sizeRect = 3;
 
-            board = new Village.Board.Board(50, 30, 0.1);
+            board = new Village.Board.Board(50, 50, 2);
 
             timer.Enabled = true;
         }
