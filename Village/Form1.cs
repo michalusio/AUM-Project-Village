@@ -11,9 +11,9 @@ namespace Village
 
         private Board _board;
         private PointF _camera;
-        private float _zoom;
         private PointF _moveDir;
         private int _sizeRect;
+        private float _zoom;
 
         public Form1()
         {
@@ -27,9 +27,9 @@ namespace Village
 
             _camera = PointF.Empty;
             _zoom = 1;
-            _sizeRect = 16;  //size for one field
+            _sizeRect = 16; //size for one field
 
-            _board = new Board(100, 100);
+            _board = new Board(30, 30);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -42,6 +42,10 @@ namespace Village
         {
             _camera.X += _moveDir.X;
             _camera.Y += _moveDir.Y;
+            foreach (var agent in _board.GetVillage().GetAgentList)
+            {
+                agent.DoAction();
+            }
             ui.Invalidate();
         }
 
@@ -49,19 +53,31 @@ namespace Village
         {
             Graphics g = e.Graphics;
             SizeF s = new SizeF(_sizeRect * _zoom, _sizeRect * _zoom);
-            for (int i = 0; i < _board.FullBoard.GetLength(1); i++)
+            for (var i = 0; i < _board.FullBoard.GetLength(1); i++)
+            for (var j = 0; j < _board.FullBoard.GetLength(0); j++)
             {
-                for (int j = 0; j < _board.FullBoard.GetLength(0); j++)
-                {
-                    g.FillRectangle(
-                        _board.FullBoard[j, i].getCultivation() ? Brushes.Green : Brushes.SaddleBrown,
-                        ((j - _board.FullBoard.GetLength(0)) * _sizeRect - _camera.X) * _zoom + e.ClipRectangle.Width * 0.5f,
-                        ((i - _board.FullBoard.GetLength(1)) * _sizeRect - _camera.Y) * _zoom + e.ClipRectangle.Height * 0.5f,
-                        s.Width,
-                        s.Height);
-                }
+                Field f = _board.FullBoard[j, i];
+                g.FillRectangle(
+                    f.GetBase()?Brushes.Black:f.GetCultivation()
+                        ? f.GetFood().Value > 0 ? Brushes.DarkGreen : Brushes.Green
+                        : Brushes.SaddleBrown,
+                    ((j - _board.FullBoard.GetLength(0)) * _sizeRect - _camera.X) * _zoom + e.ClipRectangle.Width * 0.5f,
+                    ((i - _board.FullBoard.GetLength(1)) * _sizeRect - _camera.Y) * _zoom +
+                    e.ClipRectangle.Height * 0.5f,
+                    s.Width,
+                    s.Height);
             }
 
+            foreach (var agent in _board.GetVillage().GetAgentList)
+            {
+                g.FillRectangle(Brushes.Blue,
+                    ((agent.GetCurrentX - _board.FullBoard.GetLength(0)) * _sizeRect - _camera.X) * _zoom + e.ClipRectangle.Width * 0.5f,
+                    ((agent.GetCurrentY - _board.FullBoard.GetLength(1)) * _sizeRect - _camera.Y) * _zoom +
+                    e.ClipRectangle.Height * 0.5f,
+                    s.Width,
+                    s.Height);
+            }
+            g.DrawString(_board.GetVillage().GetTotalFood.ToString("F1"),new Font("Arial Black",10), Brushes.BlueViolet,10,10);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -83,13 +99,9 @@ namespace Village
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta < 0)
-            {
                 _zoom *= 0.9f;
-            }
             if (e.Delta > 0)
-            {
                 if (_zoom * 1.1f <= 1) _zoom *= 1.1f;
-            }
         }
     }
 }

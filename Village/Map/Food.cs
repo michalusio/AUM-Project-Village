@@ -1,11 +1,16 @@
+using Village.Agents;
+
 namespace Village.Map
 {
     public class Food
     {
-        public int Value;
-        public Food(int var)
+        public float Value;
+        public readonly Agent Farmer;
+
+        public Food(float var, Agent farmer)
         {
             Value = var;
+            Farmer = farmer;
         }
     }
 }

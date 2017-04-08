@@ -1,46 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Village.Genes.Chromosomes;
 
 namespace Village.Genes
 {
     public class Genome
     {
-        public static readonly Random Rnd=new Random();
-        public const int ChromosomeCount = 2;
-        public const double MutationChance = 0.01;
-        public const double StatRange = 0.5;
+        public const float MutationChance = 0.01f;
+        public const float StatRange = 0.5f;
+        public static readonly Random Rnd = new Random();
+        private readonly FoodChromosome _fchromosome;
+        private readonly MoveChromosome _mchromosome;
+        private readonly float _durability;
 
-        private readonly double _strength;
-        private readonly double _durability;
-        private readonly List<Chromosome> _chromosomes;
+        private readonly float _strength;
 
         public Genome(List<Tuple<Genome, float>> genomes)
         {
-            float sum = genomes.Sum(a => a.Item2);
-
-            _chromosomes =new List<Chromosome>(ChromosomeCount);
-            for (int i = 0; i < ChromosomeCount; ++i)
+            if (genomes == null)
             {
-                _chromosomes.Add(new Chromosome(genomes.Select(g => new Tuple<Chromosome, float>(g.Item1._chromosomes[i], g.Item2)).ToList(),sum));
+                _fchromosome = new FoodChromosome();
+                _mchromosome = new MoveChromosome();
+                _strength = 0.5f;
+                _durability = 0.5f;
             }
+            else
+            {
+                var sum = genomes.Sum(a => a.Item2);
 
-            _strength = genomes.Sum(a => a.Item1._strength * a.Item2) / sum;
-            if (Rnd.NextDouble() < MutationChance) _strength += (Rnd.NextDouble()-0.5)*StatRange;
-            _strength = Math.Max(_strength, 0.5);
+                _fchromosome = new FoodChromosome(genomes);
+                _mchromosome = new MoveChromosome(genomes);
 
-            _durability = genomes.Sum(a => a.Item1._durability * a.Item2) / sum;
-            if (Rnd.NextDouble() < MutationChance) _durability += (Rnd.NextDouble() - 0.5) * StatRange;
-            _durability = Math.Max(_durability, 0.5);
+                _strength = genomes.Sum(a => a.Item1._strength * a.Item2) / sum;
+                if (Rnd.NextDouble() < MutationChance) _strength += (float)(Rnd.NextDouble() - 0.5) * StatRange;
+                _strength = Math.Max(_strength, 0.5f);
+
+                _durability = genomes.Sum(a => a.Item1._durability * a.Item2) / sum;
+                if (Rnd.NextDouble() < MutationChance) _durability += (float)(Rnd.NextDouble() - 0.5) * StatRange;
+                _durability = Math.Max(_durability, 0.5f);
+            }
         }
 
-        public double GetStrength() => _strength;
-        public double GetDurability() => _durability;
+        public float GetStrength() => _strength;
+        public float GetDurability() => _durability;
 
-        public IReadOnlyList<Chromosome> GetChromosomes()
+        public Tuple<FoodChromosome,MoveChromosome> GetChromosomes()
         {
-            return _chromosomes.AsReadOnly();
+            return new Tuple<FoodChromosome, MoveChromosome>(_fchromosome,_mchromosome);
         }
-
     }
 }

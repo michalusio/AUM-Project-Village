@@ -1,35 +1,41 @@
 using System.Collections.Generic;
+using Village.Map;
 
 namespace Village.Agents
 {
     public class Village
     {
+        private readonly Board _board;
+
+        private const int AGENT_START_COUNT = 3;
         private const int REQUIRED_FOOD = 500;
 
-        //Getters
-        public int GetTotalFood { get; private set; }
-        public int GetRequiredFood => REQUIRED_FOOD;
-        public List<Agent> GetAgentList { get; }
-
-        public Village()
+        public Village(Board b)
         {
-            GetAgentList=new List<Agent>();
+            _board = b;
+            GetAgentList = new List<Agent>();
+            for (int i = 0; i < AGENT_START_COUNT; i++)
+            {
+                GetAgentList.Add(new Agent(b, this));
+            }
         }
+
+        //Getters
+        public float GetTotalFood { get; set; }
+        public List<Agent> GetAgentList { get; }
 
         private bool FoodCheck()
         {
-            return GetTotalFood > GetRequiredFood;
+            return GetTotalFood >= REQUIRED_FOOD*1.25;
         }
 
-        public Agent ReproduceAgent(Agent agentA, Agent agentB)
+        public void ReproduceAgents(Agent agentA, Agent agentB)
         {
-            if (!FoodCheck()) return null;
-
-            Agent newAgent = new Agent();
-
-            GetTotalFood -= GetRequiredFood;
-
-            return newAgent;
+            while (FoodCheck())
+            {
+                GetAgentList.Add(new Agent(_board, this));
+                GetTotalFood -= REQUIRED_FOOD;
+            }
         }
     }
 }
