@@ -80,6 +80,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="bin\Debug\Village.exe.config" />
+    <None Include="bin\Debug\Village.vshost.exe.config" />
+    <None Include="bin\Debug\Village.vshost.exe.manifest" />
+    <None Include="bin\Release\Village.exe.config" />
+    <None Include="bin\Release\Village.vshost.exe.config" />
+    <None Include="bin\Release\Village.vshost.exe.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -93,7 +99,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="bin\Debug\Village.exe" />
+    <Content Include="bin\Debug\Village.pdb" />
+    <Content Include="bin\Debug\Village.vshost.exe" />
+    <Content Include="bin\Release\Village.exe" />
+    <Content Include="bin\Release\Village.pdb" />
+    <Content Include="bin\Release\Village.vshost.exe" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
