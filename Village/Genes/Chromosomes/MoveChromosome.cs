@@ -7,14 +7,14 @@ namespace Village.Genes.Chromosomes
 {
     public class MoveChromosome : Chromosome
     {
-        private const int GENE_COUNT = 5;
+        public const int GeneCount = 5;
         private const double MUTATION_CHANCE = 0.01;
         public readonly List<MoveFunction> Functions;
 
         public MoveChromosome()
         {
             Functions = new List<MoveFunction>();
-            for (int i = 0; i < GENE_COUNT; i++)
+            for (int i = 0; i < GeneCount; i++)
             {
                 Functions.Add(new IdiotMoveFunction());
             }
@@ -22,7 +22,7 @@ namespace Village.Genes.Chromosomes
 
         public MoveChromosome(IReadOnlyList<Tuple<Genome, float>> genomes)
         {
-            for (int i = 0; i < GENE_COUNT; i++)
+            for (int i = 0; i < GeneCount; i++)
             {
                 if (Genome.Rnd.NextDouble() < MUTATION_CHANCE) Functions.Add(GetMutated());
                 else

@@ -16,6 +16,7 @@ namespace Village.Agents
 
         public Action GetNextAction()
         {
+            if (_actions.Count==0) return Action.Null;
             return _actions[0];
         }
 
@@ -40,6 +41,7 @@ namespace Village.Agents
     {
         public readonly ActionType Type;
         public readonly Field Destination;
+        public static readonly Action Null=new Action(ActionType.Nothing,null);
 
         public Action(ActionType type, Field dest)
         {
@@ -50,6 +52,6 @@ namespace Village.Agents
 
     public enum ActionType
     {
-        Move,Displace,PickUpFood,ReturnFood
+        Nothing,Pathing,Moving,PickingUpFood,ReturningFood
     }
 }

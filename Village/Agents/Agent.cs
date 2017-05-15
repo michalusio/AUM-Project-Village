@@ -57,7 +57,7 @@ namespace Village.Agents
             if (_actionsToDo.Count > 0)
             {
                 Action a = _actionsToDo.GetNextAction();
-                if ((a.Type != ActionType.Displace && a.Destination != GetField())||a.Type==ActionType.Move)
+                if ((a.Type != ActionType.Moving && a.Destination != GetField())||a.Type==ActionType.Pathing)
                 {
                     _actionsToDo.MarkAsDone();
                     _actionsToDo.UnPack(_genome.GetChromosomes().Item2.GetRandomMoveFunction().GetActions(_board,this,a.Destination),a);
@@ -65,7 +65,7 @@ namespace Village.Agents
                 }
                 switch (a.Type)
                 {
-                    case ActionType.Displace:
+                    case ActionType.Moving:
                         PointF moveVector=new PointF(a.Destination.X-(int)GetCurrentX,a.Destination.Y-(int)GetCurrentY);
                         float dist = (float) Math.Sqrt(moveVector.X*moveVector.X+moveVector.Y*moveVector.Y);
                         if (dist > SPEED)
@@ -80,7 +80,7 @@ namespace Village.Agents
                             _actionsToDo.MarkAsDone();
                         }
                         break;
-                    case ActionType.PickUpFood:
+                    case ActionType.PickingUpFood:
                         float foodTaken = Math.Min(_genome.GetStrength()-GetHoldedFood,GetField().GetFood().Value);
                         if (GetField().GetFood().Farmer != null)
                         {
@@ -90,7 +90,7 @@ namespace Village.Agents
                         GetField().SetFood(new Food(GetField().GetFood().Value-foodTaken,GetField().GetFood().Farmer));
                         _actionsToDo.MarkAsDone();
                         break;
-                    case ActionType.ReturnFood:
+                    case ActionType.ReturningFood:
                         GetFood += GetHoldedFood;
                         _village.GetTotalFood += GetHoldedFood;
                         GetHoldedFood = 0;
@@ -100,6 +100,16 @@ namespace Village.Agents
                         throw new ArgumentOutOfRangeException();
                 }
             }
+        }
+
+        public Action GetAction()
+        {
+            return _actionsToDo.GetNextAction();
+        }
+
+        public Genome GetGenome()
+        {
+            return _genome;
         }
     }
 }

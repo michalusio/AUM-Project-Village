@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace Village
@@ -46,6 +46,7 @@ namespace Village
             this.ui.TabIndex = 0;
             this.ui.TabStop = false;
             this.ui.Paint += new System.Windows.Forms.PaintEventHandler(this.ui_Paint);
+            this.ui.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ui_MouseClick);
             // 
             // timer
             // 
@@ -57,10 +58,11 @@ namespace Village
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 461);
+            this.ClientSize = new System.Drawing.Size(884, 861);
             this.Controls.Add(this.ui);
             this.DoubleBuffered = true;
             this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(900, 900);
             this.Name = "Form1";
             this.Text = "Village Project";
             this.Load += new System.EventHandler(this.Form1_Load);

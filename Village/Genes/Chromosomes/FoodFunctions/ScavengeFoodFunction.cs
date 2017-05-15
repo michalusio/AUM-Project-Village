@@ -29,8 +29,8 @@ namespace Village.Genes.Chromosomes.FoodFunctions
             }
             if (foodFields.Count > 0)
             {
-                aList.AddAction(new Action(ActionType.PickUpFood, foodFields[Genome.Rnd.Next(foodFields.Count)]));
-                aList.AddAction(new Action(ActionType.ReturnFood, b.FullBoard[1, 1]));
+                aList.AddAction(new Action(ActionType.PickingUpFood, foodFields[Genome.Rnd.Next(foodFields.Count)]));
+                aList.AddAction(new Action(ActionType.ReturningFood, b.FullBoard[1, 1]));
             }
             else
             {
@@ -42,9 +42,14 @@ namespace Village.Genes.Chromosomes.FoodFunctions
                     i = (int) (5 * Math.Cos(ang));
                     j = (int) (5 * Math.Sin(ang));
                 } while (!b.IsValid(x + i, y + j));
-                aList.AddAction(new Action(ActionType.Displace, b.FullBoard[x+i,y+j]));
+                aList.AddAction(new Action(ActionType.Moving, b.FullBoard[x+i,y+j]));
             }
             return aList;
+        }
+
+        public override string GetName()
+        {
+            return "Scavenge I";
         }
     }
 }

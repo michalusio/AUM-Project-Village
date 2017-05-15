@@ -49,8 +49,10 @@
     <Compile Include="Agents\ActionList.cs" />
     <Compile Include="Agents\Agent.cs" />
     <Compile Include="Agents\Village.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Genes\Chromosomes\FoodChromosome.cs" />
     <Compile Include="Genes\Chromosomes\FoodFunction.cs" />
+    <Compile Include="Genes\Chromosomes\Function.cs" />
     <Compile Include="Genes\Chromosomes\MoveFunctions\IdiotMoveFunction.cs" />
     <Compile Include="Genes\Chromosomes\MoveChromosome.cs" />
     <Compile Include="Genes\Chromosomes\MoveFunction.cs" />

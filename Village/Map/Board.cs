@@ -30,7 +30,7 @@ namespace Village.Map
                 for (var index = 0; index < nodes.Length; index++)
                 {
                     var node = nodes[index];
-                    var dst = Sqr(node.Item1.X - i) + Sqr(node.Item1.Y - j);
+                    var dst = Extensions.Sqr(node.Item1.X - i) + Extensions.Sqr(node.Item1.Y - j);
                     if (dst < dist)
                     {
                         dist = dst;
@@ -45,11 +45,6 @@ namespace Village.Map
         public Agents.Village GetVillage()
         {
             return _village;
-        }
-
-        private static float Sqr(float a)
-        {
-            return a * a;
         }
 
         public bool IsValid(int x, int y)

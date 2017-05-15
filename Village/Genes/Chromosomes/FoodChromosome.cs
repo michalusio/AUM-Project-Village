@@ -7,7 +7,7 @@ namespace Village.Genes.Chromosomes
 {
     public class FoodChromosome : Chromosome
     {
-        private const int GENE_COUNT = 5;
+        public const int GeneCount = 5;
         private const double MUTATION_CHANCE = 0.01;
         public readonly List<FoodFunction> Functions;
 
@@ -22,7 +22,7 @@ namespace Village.Genes.Chromosomes
 
         public FoodChromosome(IReadOnlyList<Tuple<Genome, float>> genomes)
         {
-            for (int i = 0; i < GENE_COUNT; i++)
+            for (int i = 0; i < GeneCount; i++)
             {
                 if (Genome.Rnd.NextDouble() < MUTATION_CHANCE) Functions.Add(GetMutated());
                 else
