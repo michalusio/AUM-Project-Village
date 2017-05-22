@@ -6,9 +6,9 @@ namespace Village.Map
 {
     public class Board
     {
-        private const int NODE_COUNT = 5;
+        private const int NODE_COUNT = 15;
         private const float FOOD_SIZE = 5;
-        private const int FOOD_COUNT = 5;
+        private const int FOOD_COUNT = 35;
 
         public Field[,] FullBoard;
         private readonly Agents.Village _village;
@@ -21,7 +21,7 @@ namespace Village.Map
                 nodes[i] =
                     new Tuple<PointF, bool>(
                         new PointF((float) Genome.Rnd.NextDouble() * x, (float) Genome.Rnd.NextDouble() * y),
-                        Genome.Rnd.NextDouble() > 0.5);
+                        Genome.Rnd.NextDouble() > 0.25);
             for (var i = 0; i < x; i++)
             for (var j = 0; j < y; j++)
             {

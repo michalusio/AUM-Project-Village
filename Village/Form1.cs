@@ -17,11 +17,15 @@ namespace Village
         private int _sizeRect;
         private float _zoom;
         private Agent _selectedAgent;
+        private int _speed;
+        private int _tick;
         private readonly Font _fontArial = new Font("Arial Black", 10);
 
         public Form1()
         {
             InitializeComponent();
+            _speed = 4;
+            _tick = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,7 +37,7 @@ namespace Village
             _zoom = 1;
             _sizeRect = 16; //size for one field
 
-            _board = new Board(30, 30);
+            _board = new Board(60, 60);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -46,9 +50,18 @@ namespace Village
         {
             _camera.X += _moveDir.X;
             _camera.Y += _moveDir.Y;
-            foreach (var agent in _board.GetVillage().GetAgentList)
+            if (_speed != 4)
             {
-                agent.DoAction();
+                _tick++;
+                if (_tick >= _speed)
+                {
+                    _tick = 0;
+                    _board.GetVillage().TickFood();
+                    foreach (var agent in _board.GetVillage().GetAgentList)
+                    {
+                        agent.DoAction();
+                    }
+                }
             }
             ui.Invalidate();
         }
@@ -82,8 +95,9 @@ namespace Village
                     s.Width,
                     s.Height);
             }
-            g.DrawString(_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,10,10);
+            g.DrawString("Food in Village: "+_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,10,10);
             if (_selectedAgent != null) DrawAgentDescription(g,area);
+            g.DrawString("SPEED: "+(4-_speed),_fontArial,Brushes.Black, 10, 32);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -100,6 +114,10 @@ namespace Village
             if (e.KeyCode == Keys.Down) _moveDir.Y = 0;
             if (e.KeyCode == Keys.Left) _moveDir.X = 0;
             if (e.KeyCode == Keys.Right) _moveDir.X = 0;
+            if (e.KeyCode == Keys.D1) _speed = 3;
+            if (e.KeyCode == Keys.D2) _speed = 2;
+            if (e.KeyCode == Keys.D3) _speed = 1;
+            if (e.KeyCode == Keys.D0) _speed = 4;
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)

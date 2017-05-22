@@ -39,8 +39,8 @@ namespace Village.Genes.Chromosomes.FoodFunctions
                 do
                 {
                     float ang = (float) (Genome.Rnd.NextDouble() * 2 * Math.PI);
-                    i = (int) (5 * Math.Cos(ang));
-                    j = (int) (5 * Math.Sin(ang));
+                    i = (int) (15 * Math.Cos(ang));
+                    j = (int) (15 * Math.Sin(ang));
                 } while (!b.IsValid(x + i, y + j));
                 aList.AddAction(new Action(ActionType.Moving, b.FullBoard[x+i,y+j]));
             }

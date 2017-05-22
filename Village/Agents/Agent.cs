@@ -8,7 +8,7 @@ namespace Village.Agents
 {
     public class Agent
     {
-        private const float SPEED = 0.1f;
+        private const float SPEED = 0.5f;
 
         private PointF _currentCoordinates;
 
