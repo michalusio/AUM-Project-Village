@@ -57,6 +57,7 @@ namespace Village
                 {
                     _tick = 0;
                     _board.GetVillage().TickFood();
+                    _board.GetVillage().TickAge();
                     foreach (var agent in _board.GetVillage().GetAgentList)
                     {
                         agent.DoAction();

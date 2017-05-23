@@ -11,7 +11,8 @@ namespace Village.Agents
 
         private const int AGENT_START_COUNT = 3;
         private const int REQUIRED_FOOD = 500;
-        private const int BASE_EAT = 3;
+        private const float BASE_EAT = 3;
+        private const float BASE_AGE = 0.01f;
 
         public Village(Board b)
         {
@@ -21,6 +22,7 @@ namespace Village.Agents
             {
                 GetAgentList.Add(new Agent(b, this));
             }
+            GetTotalFood = 500;
         }
 
         //Getters
@@ -49,6 +51,19 @@ namespace Village.Agents
                     }
                 }
                 GetTotalFood += 250;
+            }
+        }
+
+        public void TickAge()
+        {
+            for (int i = GetAgentList.Count - 1; i >= 0; --i)
+            {
+                Agent a = GetAgentList[i];
+                a.GetAge += BASE_AGE;
+                if (a.GetAge >= a.GetGenome().GetDurability())
+                {
+                    GetAgentList.RemoveAt(i);
+                }
             }
         }
 

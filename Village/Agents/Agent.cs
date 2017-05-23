@@ -33,7 +33,7 @@ namespace Village.Agents
         //Getters
         public float GetCurrentX => _currentCoordinates.X;
         public float GetCurrentY => _currentCoordinates.Y;
-        public int GetAge { get; set; }
+        public float GetAge { get; set; }
         public float GetFood { get; set; }
         public float GetHoldedFood { get; set; }
 
