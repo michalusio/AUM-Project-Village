@@ -30,7 +30,7 @@ namespace Village.Genes.Chromosomes.FoodFunctions
             if (foodFields.Count > 0)
             {
                 aList.AddAction(new Action(ActionType.PickingUpFood, foodFields[Genome.Rnd.Next(foodFields.Count)]));
-                aList.AddAction(new Action(ActionType.ReturningFood, b.FullBoard[1, 1]));
+                aList.AddAction(new Action(ActionType.ReturningFood, b.FullBoard[(int)b.GetVillage().VillageMain.X, (int)b.GetVillage().VillageMain.Y]));
             }
             else
             {

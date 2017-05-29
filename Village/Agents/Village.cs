@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Village.Genes;
 using Village.Map;
@@ -15,12 +16,16 @@ namespace Village.Agents
         private const float BASE_AGE = 0.01f;
         private const float BREED_CHANCE = 0.001f;
 
+
+        public PointF VillageMain;
         public readonly Graph FoodGraph;
         public readonly Graph PopGraph;
+        public readonly TwoGraph Genes;
         private int _t;
 
-        public Village(Board b)
+        public Village(Board b, PointF start)
         {
+            VillageMain = start;
             _board = b;
             GetAgentList = new List<Agent>();
             for (int i = 0; i < AGENT_START_COUNT; i++)
@@ -31,6 +36,7 @@ namespace Village.Agents
             _t = 0;
             FoodGraph = new Graph();
             PopGraph = new Graph();
+            Genes = new TwoGraph() {Color1 = Color.DeepSkyBlue,Color2 = Color.Green};
         }
 
         //Getters
@@ -62,17 +68,28 @@ namespace Village.Agents
             }
         }
 
-        public void TickAge()
+        public void TickAge(float agingSpeed)
         {
+            int farm = 0;
+            int scav = 0;
             for (int i = GetAgentList.Count - 1; i >= 0; --i)
             {
                 Agent a = GetAgentList[i];
-                a.GetAge += BASE_AGE;
+                a.GetAge += BASE_AGE * agingSpeed;
                 if (a.GetAge >= a.GetGenome().GetDurability())
                 {
                     GetAgentList.RemoveAt(i);
                 }
+                else
+                {
+                    foreach (var f in a.GetGenome().GetChromosomes().Item1.Functions)
+                    {
+                        if (f.GetName().Contains("Farm")) farm++;
+                        else if (f.GetName().Contains("Scavenge")) scav++;
+                    }
+                }
             }
+            Genes.AddPoint(farm/(float)GetAgentList.Count,scav/(float)GetAgentList.Count);
             if (_t >= 3)
             {
                 _t = 0;

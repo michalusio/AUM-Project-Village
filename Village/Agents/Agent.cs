@@ -23,7 +23,7 @@ namespace Village.Agents
         {
             _board = b;
             _village = v;
-            _currentCoordinates = PointF.Empty;
+            _currentCoordinates = v.VillageMain;
             _genome = v.GetAgentList.Count<3 ? new Genome(null) : new Genome(v.GetAgentList.Select(a => new Tuple<Genome,float>(a._genome,a.GetFood/(a.GetAge+0.1f))).ToList());
             GetAge = 0;
             GetFood = 0;
@@ -108,7 +108,7 @@ namespace Village.Agents
                                     Field f = GetField().GetRelative(i, j);
                                     if (f.GetCultivation() && f.GetFood().Value < 1)
                                     {
-                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.25f, this));
+                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.35f, this));
                                         f.SetCultivation(false);
                                     }
                                 }

@@ -6,14 +6,14 @@ namespace Village.Map
 {
     public class Board
     {
-        private const int NODE_COUNT = 15;
-        private const float FOOD_SIZE = 5;
-        private const int FOOD_COUNT = 10xt0;
+        private const int NODE_COUNT = 10;
+        private const float FOOD_SIZE = 3;
+        private const int FOOD_COUNT = 35;
 
         private readonly Agents.Village _village;
         public Field[,] FullBoard;
 
-        public Board(int x, int y)
+        public Board(int x, int y, PointF start)
         {
             FullBoard = new Field[x, y];
             var nodes = new Tuple<PointF, bool>[NODE_COUNT * FullBoard.Length / (60 * 60)];
@@ -37,9 +37,9 @@ namespace Village.Map
                         nearestNode = index;
                     }
                 }
-                FullBoard[i, j] = new Field(this, nodes[nearestNode].Item2,(i<2 && j<2), nodes[nearestNode].Item2?dist<FOOD_SIZE * FullBoard.Length / (60 * 60) ? FOOD_COUNT:0:0) {X=i,Y=j};
+                FullBoard[i, j] = new Field(this, nodes[nearestNode].Item2,Extensions.Sqr(i-x*0.5f) + Extensions.Sqr(j - y * 0.5f) < 4, nodes[nearestNode].Item2?dist<FOOD_SIZE * FullBoard.Length / (60 * 60) ? FOOD_COUNT:0:0) {X=i,Y=j};
             }
-            _village=new Agents.Village(this);
+            _village=new Agents.Village(this,start);
         }
 
         public Agents.Village GetVillage()

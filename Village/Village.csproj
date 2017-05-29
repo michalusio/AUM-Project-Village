@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Agents\ActionList.cs" />
     <Compile Include="Agents\Agent.cs" />
+    <Compile Include="Agents\TwoGraph.cs" />
     <Compile Include="Agents\Graph.cs" />
     <Compile Include="Agents\Village.cs" />
     <Compile Include="Extensions.cs" />

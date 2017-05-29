@@ -20,7 +20,6 @@ namespace Village
         private int _sizeRect;
         private float _zoom;
         private Agent _selectedAgent;
-        private int _speed;
         private int _tick;
         private readonly Font _fontArial = new Font("Arial Black", 10);
 
@@ -29,14 +28,13 @@ namespace Village
         public Form1()
         {
             InitializeComponent();
-            _speed = 0;
             _tick = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             ui.Width = ClientSize.Width;
-            ui.Height = ClientSize.Height;
+            ui.Height = ClientSize.Height-150;
 
             _camera = new PointF(800, 800);
             _zoom = 1;
@@ -50,31 +48,31 @@ namespace Village
             _cabbages[4] = Image.FromFile("textures/Cabbage_4.png");
             _cabbages[5] = Image.FromFile("textures/Cabbage_5.png");
             _cabbages[6] = Image.FromFile("textures/Cabbage_6.png");
-            _board = new Board(100, 100);
+            _board = new Board(100, 100, new PointF(50,50));
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             ui.Width = ClientSize.Width;
-            ui.Height = ClientSize.Height;
+            ui.Height = ClientSize.Height-150;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             _camera.X += _moveDir.X;
             _camera.Y += _moveDir.Y;
-            if (_speed > 0 && _speed < 4)
+            if (simSpeed.Value > 0 && simSpeed.Value < 4)
             {
                 _tick++;
-                if (_tick >= _speed)
+                if (_tick >= simSpeed.Value)
                 {
                     _tick = 0;
                     TickGame();
                 }
             }
-            if (_speed > 3)
+            if (simSpeed.Value > 3)
             {
-                for(int i = 0; i < _speed-2; ++i) TickGame();
+                for(int i = 0; i < simSpeed.Value - 2; ++i) TickGame();
             }
             ui.Invalidate();
         }
@@ -82,7 +80,7 @@ namespace Village
         private void TickGame()
         {
             _board.GetVillage().TickFood();
-            _board.GetVillage().TickAge();
+            _board.GetVillage().TickAge(agingSpeed.Value/5f);
             _board.GetVillage().ReproduceAgents();
             foreach (var agent in _board.GetVillage().GetAgentList)
             {
@@ -95,11 +93,11 @@ namespace Village
                 var f = _board.FullBoard[x, y];
                 if (f.GetGrass() < 0.99f && IsNearGrass(f))
                 {
-                    f.AddCultivation(0.15f);
+                    f.AddCultivation(grassGrowth.Value/20f);
                 }
                 else
                 {
-                    if (f.GetGrass()>0.25f) f.AddCultivation(0.05f);
+                    if (f.GetGrass()>0.25f) f.AddCultivation(grassGrowth.Value/60f);
                 }
             }
         }
@@ -156,12 +154,14 @@ namespace Village
                     s.Width,
                     s.Height);
             }
-            g.DrawString("SPEED: " + (4 - _speed), _fontArial, Brushes.Black, 10, 0);
-            g.DrawString("Food in Village: "+_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,0,28);
+            g.FillRectangle(Brushes.Bisque, 0,0,199,748);
+            g.DrawString("Food in Village: "+_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,0,0);
             if (_selectedAgent != null) DrawAgentDescription(g,area);
-            _board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,48,200,200));
-            g.DrawString("Agents in Village: " + _board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 292);
-            _board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 312, 200, 200));
+            _board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,20,200,200));
+            g.DrawString("Agents in Village: " + _board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 264);
+            _board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 284, 200, 200));
+            g.DrawString("Scavenge genes in Village:", _fontArial, Brushes.BlueViolet, 0, 508);
+            _board.GetVillage().Genes.Plot(g, new Rectangle(0, 528, 200, 100));
         }
 
         private Color InterpolateColor(Color a, Color b, float t)
@@ -171,28 +171,18 @@ namespace Village
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Up) _moveDir.Y = -CAMERA_SPEED / _zoom;
-            if (e.KeyCode == Keys.Down) _moveDir.Y = CAMERA_SPEED / _zoom;
-            if (e.KeyCode == Keys.Left) _moveDir.X = -CAMERA_SPEED / _zoom;
-            if (e.KeyCode == Keys.Right) _moveDir.X = CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.W) _moveDir.Y = -CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.S) _moveDir.Y = CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.A) _moveDir.X = -CAMERA_SPEED / _zoom;
+            if (e.KeyCode == Keys.D) _moveDir.X = CAMERA_SPEED / _zoom;
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Up) _moveDir.Y = 0;
-            if (e.KeyCode == Keys.Down) _moveDir.Y = 0;
-            if (e.KeyCode == Keys.Left) _moveDir.X = 0;
-            if (e.KeyCode == Keys.Right) _moveDir.X = 0;
-            if (e.KeyCode == Keys.D1) _speed = 3;
-            if (e.KeyCode == Keys.D2) _speed = 2;
-            if (e.KeyCode == Keys.D3) _speed = 1;
-            if (e.KeyCode == Keys.D4) _speed = 4;
-            if (e.KeyCode == Keys.D5) _speed = 5;
-            if (e.KeyCode == Keys.D6) _speed = 6;
-            if (e.KeyCode == Keys.D7) _speed = 7;
-            if (e.KeyCode == Keys.D8) _speed = 8;
-            if (e.KeyCode == Keys.D9) _speed = 9;
-            if (e.KeyCode == Keys.Oemtilde) _speed = 0;
+            if (e.KeyCode == Keys.W) _moveDir.Y = 0;
+            if (e.KeyCode == Keys.S) _moveDir.Y = 0;
+            if (e.KeyCode == Keys.A) _moveDir.X = 0;
+            if (e.KeyCode == Keys.D) _moveDir.X = 0;
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -246,6 +236,12 @@ namespace Village
             g.DrawRectangle(Pens.Black,area.Width*0.8f,72,area.Width*0.2f,24+Math.Max(FoodChromosome.GeneCount, MoveChromosome.GeneCount)*24);
             g.DrawLine(Pens.Black,area.Width*0.8f,96,area.Width,96);
             g.DrawLine(Pens.Black,area.Width*0.9f,96,area.Width*0.9f,height);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            _selectedAgent = null;
+            _board = new Board(100, 100, new PointF(50, 50));
         }
     }
 }
