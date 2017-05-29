@@ -110,6 +110,13 @@
     <Content Include="bin\Debug\Village.exe" />
     <Content Include="bin\Debug\Village.pdb" />
     <Content Include="bin\Debug\Village.vshost.exe" />
+    <Content Include="bin\Release\textures\Cabbage_0.png" />
+    <Content Include="bin\Release\textures\Cabbage_1.png" />
+    <Content Include="bin\Release\textures\Cabbage_2.png" />
+    <Content Include="bin\Release\textures\Cabbage_3.png" />
+    <Content Include="bin\Release\textures\Cabbage_4.png" />
+    <Content Include="bin\Release\textures\Cabbage_5.png" />
+    <Content Include="bin\Release\textures\Cabbage_6.png" />
     <Content Include="bin\Release\Village.exe" />
     <Content Include="bin\Release\Village.pdb" />
     <Content Include="bin\Release\Village.vshost.exe" />
