@@ -1,7 +1,9 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Village.Agents;
+using Village.Genes;
 using Village.Genes.Chromosomes;
 using Village.Map;
 
@@ -10,6 +12,7 @@ namespace Village
     public partial class Form1 : Form
     {
         private const float CAMERA_SPEED = 5;
+        private const int GRASS_GROWTH = 20;
 
         private Board _board;
         private PointF _camera;
@@ -20,6 +23,8 @@ namespace Village
         private int _speed;
         private int _tick;
         private readonly Font _fontArial = new Font("Arial Black", 10);
+
+        private Image[] _cabbages;
 
         public Form1()
         {
@@ -37,7 +42,15 @@ namespace Village
             _zoom = 1;
             _sizeRect = 16; //size for one field
 
-            _board = new Board(60, 60);
+            _cabbages = new Image[7];
+            _cabbages[0]=Image.FromFile("textures/Cabbage_0.png");
+            _cabbages[1] = Image.FromFile("textures/Cabbage_1.png");
+            _cabbages[2] = Image.FromFile("textures/Cabbage_2.png");
+            _cabbages[3] = Image.FromFile("textures/Cabbage_3.png");
+            _cabbages[4] = Image.FromFile("textures/Cabbage_4.png");
+            _cabbages[5] = Image.FromFile("textures/Cabbage_5.png");
+            _cabbages[6] = Image.FromFile("textures/Cabbage_6.png");
+            _board = new Board(100, 100);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -58,47 +71,88 @@ namespace Village
                     _tick = 0;
                     _board.GetVillage().TickFood();
                     _board.GetVillage().TickAge();
+                    _board.GetVillage().ReproduceAgents();
                     foreach (var agent in _board.GetVillage().GetAgentList)
                     {
                         agent.DoAction();
+                    }
+                    for (int i = 0; i < GRASS_GROWTH*_board.FullBoard.Length/(60*60); i++)
+                    {
+                        int x = Genome.Rnd.Next(_board.FullBoard.GetLength(0));
+                        int y = Genome.Rnd.Next(_board.FullBoard.GetLength(1));
+                        if (_board.FullBoard[x, y].GetGrass()<0.99f && IsNearGrass(_board.FullBoard[x,y]))
+                        {
+                            _board.FullBoard[x,y].AddCultivation(0.3f);
+                        }
                     }
                 }
             }
             ui.Invalidate();
         }
 
+        private bool IsNearGrass(Field f)
+        {
+            return f.GetCultivation() || f.GetRelative(-1, 0).GetCultivation() || f.GetRelative(1, 0).GetCultivation() ||
+                   f.GetRelative(0, -1).GetCultivation() || f.GetRelative(0, 1).GetCultivation();
+        }
+
         private void ui_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+            g.InterpolationMode=InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode=PixelOffsetMode.Half;
+            g.SmoothingMode=SmoothingMode.None;
             Rectangle area = e.ClipRectangle;
             SizeF s = new SizeF(_sizeRect * _zoom, _sizeRect * _zoom);
-            for (var i = 0; i < _board.FullBoard.GetLength(1); i++)
-            for (var j = 0; j < _board.FullBoard.GetLength(0); j++)
+            for (var i = 0; i < _board.FullBoard.GetLength(0); i++)
+            for (var j = 0; j < _board.FullBoard.GetLength(1); j++)
             {
-                Field f = _board.FullBoard[j, i];
+                Field f = _board.FullBoard[i, j];
+                    PointF p= new PointF(
+                        (i * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
+                        (j * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
                 g.FillRectangle(
-                    f.GetBase()?Brushes.Black:f.GetCultivation()
-                        ? f.GetFood().Value > 0 ? Brushes.DarkGreen : Brushes.Green
-                        : Brushes.SaddleBrown,
-                    (j * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
-                    (i * _sizeRect - _camera.Y) * _zoom +
-                    area.Height * 0.5f,
-                    s.Width,
-                    s.Height);
+                    f.GetBase()?Brushes.Black : new SolidBrush(InterpolateColor(Color.SaddleBrown, Color.Green, f.GetGrass())),
+                    new RectangleF(p.X, p.Y, s.Width, s.Height));
+                if (f.GetFood().Value > 0)
+                {
+                    g.DrawImage(_cabbages[(i*_board.FullBoard.GetLength(0)+j)%_cabbages.Length], new RectangleF(p.X, p.Y, s.Width,s.Height));
+                }
             }
 
             foreach (var agent in _board.GetVillage().GetAgentList)
             {
-                g.FillRectangle(_selectedAgent==agent?Brushes.Red:Brushes.Blue,
+                PointF p = new PointF(
                     (agent.GetCurrentX * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
-                    (agent.GetCurrentY * _sizeRect - _camera.Y) * _zoom +
+                    (agent.GetCurrentY * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
+                g.FillEllipse(new SolidBrush(InterpolateColor(Color.Aqua,Color.DarkBlue,agent.GetAge/agent.GetGenome().GetDurability())),
+                    p.X, p.Y,
+                    s.Width,
+                    s.Height);
+                if (agent.GetHoldedFood > 0)
+                {
+                    g.DrawImage(_cabbages[Math.Abs(agent.GetHashCode())%_cabbages.Length],new RectangleF(p.X, p.Y, s.Width*0.75f,s.Height*0.75f));
+                }
+            }
+            if (_selectedAgent != null)
+            {
+                g.DrawEllipse(new Pen(Color.Red,4*_zoom), (_selectedAgent.GetCurrentX * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
+                    (_selectedAgent.GetCurrentY * _sizeRect - _camera.Y) * _zoom +
                     area.Height * 0.5f,
                     s.Width,
                     s.Height);
             }
-            g.DrawString("Food in Village: "+_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,10,10);
+            g.DrawString("SPEED: " + (4 - _speed), _fontArial, Brushes.Black, 10, 0);
+            g.DrawString("Food in Village: "+_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,0,28);
             if (_selectedAgent != null) DrawAgentDescription(g,area);
-            g.DrawString("SPEED: "+(4-_speed),_fontArial,Brushes.Black, 10, 32);
+            _board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,48,200,200));
+            g.DrawString("Agents in Village: " + _board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 292);
+            _board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 312, 200, 200));
+        }
+
+        private Color InterpolateColor(Color a, Color b, float t)
+        {
+            return Color.FromArgb((int) (a.R + t * (b.R - a.R)), (int) (a.G + t * (b.G - a.G)), (int) (a.B + t * (b.B - a.B)));
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -126,7 +180,7 @@ namespace Village
             if (e.Delta < 0)
                 _zoom *= 0.9f;
             if (e.Delta > 0)
-                if (_zoom * 1.1f <= 1) _zoom *= 1.1f;
+                if (_zoom * 1.1f <= 5f) _zoom *= 1.1f;
         }
 
         private void ui_MouseClick(object sender, MouseEventArgs e)

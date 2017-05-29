@@ -6,7 +6,7 @@ using Action = Village.Agents.Action;
 
 namespace Village.Genes.Chromosomes.FoodFunctions
 {
-    public class ScavengeFoodFunction : FoodFunction
+    public class ScavengeFoodFunction2 : FoodFunction
     {
         public override ActionList GetActions(Board b, Agent a)
         {
@@ -29,7 +29,17 @@ namespace Village.Genes.Chromosomes.FoodFunctions
             }
             if (foodFields.Count > 0)
             {
-                aList.AddAction(new Action(ActionType.PickingUpFood, foodFields[Genome.Rnd.Next(foodFields.Count)]));
+                Field nearestField = null;
+                float minDist = float.MaxValue;
+                foreach (var f in foodFields)
+                {
+                    if (f.DistSqr(a.GetField()) < minDist)
+                    {
+                        minDist = f.DistSqr(a.GetField());
+                        nearestField = f;
+                    }
+                }
+                aList.AddAction(new Action(ActionType.PickingUpFood, nearestField));
                 aList.AddAction(new Action(ActionType.ReturningFood, b.FullBoard[1, 1]));
             }
             else
@@ -42,14 +52,14 @@ namespace Village.Genes.Chromosomes.FoodFunctions
                     i = (int) (15 * Math.Cos(ang));
                     j = (int) (15 * Math.Sin(ang));
                 } while (!b.IsValid(x + i, y + j));
-                aList.AddAction(new Action(ActionType.Moving, b.FullBoard[x+i,y+j]));
+                aList.UnPack(a.GetGenome().GetChromosomes().Item2.GetRandomMoveFunction().GetActions(b, a, b.FullBoard[x + i, y + j]), null);
             }
             return aList;
         }
 
         public override string GetName()
         {
-            return "Scavenge I";
+            return "Scavenge II";
         }
     }
 }

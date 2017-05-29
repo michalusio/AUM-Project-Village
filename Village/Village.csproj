@@ -48,15 +48,19 @@
   <ItemGroup>
     <Compile Include="Agents\ActionList.cs" />
     <Compile Include="Agents\Agent.cs" />
+    <Compile Include="Agents\Graph.cs" />
     <Compile Include="Agents\Village.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Genes\Chromosomes\FoodChromosome.cs" />
     <Compile Include="Genes\Chromosomes\FoodFunction.cs" />
+    <Compile Include="Genes\Chromosomes\FoodFunctions\FarmFoodFunction1.cs" />
+    <Compile Include="Genes\Chromosomes\FoodFunctions\ScavengeFoodFunction2.cs" />
     <Compile Include="Genes\Chromosomes\Function.cs" />
-    <Compile Include="Genes\Chromosomes\MoveFunctions\IdiotMoveFunction.cs" />
+    <Compile Include="Genes\Chromosomes\MoveFunctions\NormalMoveFunction.cs" />
     <Compile Include="Genes\Chromosomes\MoveChromosome.cs" />
     <Compile Include="Genes\Chromosomes\MoveFunction.cs" />
-    <Compile Include="Genes\Chromosomes\FoodFunctions\ScavengeFoodFunction.cs" />
+    <Compile Include="Genes\Chromosomes\FoodFunctions\ScavengeFoodFunction1.cs" />
+    <Compile Include="Genes\Chromosomes\MoveFunctions\NoDiagonalMoveFunction.cs" />
     <Compile Include="Map\Board.cs" />
     <Compile Include="Map\Field.cs" />
     <Compile Include="Map\Food.cs" />

@@ -8,20 +8,20 @@ namespace Village.Map
     {
         private const int NODE_COUNT = 15;
         private const float FOOD_SIZE = 5;
-        private const int FOOD_COUNT = 35;
+        private const int FOOD_COUNT = 150;
 
-        public Field[,] FullBoard;
         private readonly Agents.Village _village;
+        public Field[,] FullBoard;
 
         public Board(int x, int y)
         {
             FullBoard = new Field[x, y];
-            var nodes = new Tuple<PointF, bool>[NODE_COUNT];
+            var nodes = new Tuple<PointF, bool>[NODE_COUNT * FullBoard.Length / (60 * 60)];
             for (var i = 0; i < nodes.Length; ++i)
                 nodes[i] =
                     new Tuple<PointF, bool>(
                         new PointF((float) Genome.Rnd.NextDouble() * x, (float) Genome.Rnd.NextDouble() * y),
-                        Genome.Rnd.NextDouble() > 0.25);
+                        Genome.Rnd.NextDouble() > 0.5);
             for (var i = 0; i < x; i++)
             for (var j = 0; j < y; j++)
             {
@@ -37,7 +37,7 @@ namespace Village.Map
                         nearestNode = index;
                     }
                 }
-                FullBoard[i, j] = new Field(nodes[nearestNode].Item2,(i<2 && j<2), nodes[nearestNode].Item2?dist<FOOD_SIZE?FOOD_COUNT:0:0) {X=i,Y=j};
+                FullBoard[i, j] = new Field(this, nodes[nearestNode].Item2,(i<2 && j<2), nodes[nearestNode].Item2?dist<FOOD_SIZE * FullBoard.Length / (60 * 60) ? FOOD_COUNT:0:0) {X=i,Y=j};
             }
             _village=new Agents.Village(this);
         }

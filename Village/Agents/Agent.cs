@@ -14,6 +14,7 @@ namespace Village.Agents
 
         private readonly Genome _genome;
         private readonly ActionList _actionsToDo;
+        private int _farm;
 
         private readonly Board _board;
         private readonly Village _village;
@@ -23,7 +24,7 @@ namespace Village.Agents
             _board = b;
             _village = v;
             _currentCoordinates = PointF.Empty;
-            _genome = v.GetAgentList.Count<3 ? new Genome(null) : new Genome(v.GetAgentList.Select(a => new Tuple<Genome,float>(a._genome,a.GetFood)).ToList());
+            _genome = v.GetAgentList.Count<3 ? new Genome(null) : new Genome(v.GetAgentList.Select(a => new Tuple<Genome,float>(a._genome,a.GetFood/(a.GetAge+0.1f))).ToList());
             GetAge = 0;
             GetFood = 0;
             GetHoldedFood = 0;
@@ -95,6 +96,26 @@ namespace Village.Agents
                         _village.GetTotalFood += GetHoldedFood;
                         GetHoldedFood = 0;
                         _actionsToDo.MarkAsDone();
+                        break;
+                    case ActionType.FarmingArea:
+                        if (_farm>=1500/GetGenome().GetDurability())
+                        {
+                            _farm = 0;
+                            for (int i = -1; i < 2; i++)
+                            {
+                                for (int j = -1; j < 2; j++)
+                                {
+                                    Field f = GetField().GetRelative(i, j);
+                                    if (f.GetCultivation() && f.GetFood().Value < 1)
+                                    {
+                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.5f, this));
+                                        f.SetCultivation(false);
+                                    }
+                                }
+                            }
+                            _actionsToDo.MarkAsDone();
+                        }
+                        else _farm++;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

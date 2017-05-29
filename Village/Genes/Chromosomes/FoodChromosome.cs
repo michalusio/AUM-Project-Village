@@ -9,14 +9,13 @@ namespace Village.Genes.Chromosomes
     {
         public const int GeneCount = 5;
         private const double MUTATION_CHANCE = 0.01;
-        public readonly List<FoodFunction> Functions;
+        public readonly List<FoodFunction> Functions = new List<FoodFunction>();
 
         public FoodChromosome()
         {
-            Functions=new List<FoodFunction>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < GeneCount; i++)
             {
-                Functions.Add(new ScavengeFoodFunction());
+                Functions.Add(new ScavengeFoodFunction1());
             }
         }
 
@@ -33,9 +32,11 @@ namespace Village.Genes.Chromosomes
                     foreach (var t in genomes)
                     {
                         q -= t.Item2;
-                        if (q > 0) continue;
-                        chosenGenome = t.Item1;
-                        break;
+                        if (q <= 0)
+                        {
+                            chosenGenome = t.Item1;
+                            break;
+                        }
                     }
                     Functions.Add(chosenGenome.GetChromosomes().Item1.Functions[i]);
                 }
@@ -47,9 +48,15 @@ namespace Village.Genes.Chromosomes
             return Functions[Genome.Rnd.Next(Functions.Count)];
         }
 
-        private static FoodFunction GetMutated()
+        public static FoodFunction GetMutated()
         {
-            return new ScavengeFoodFunction();
+            var lambdas = new Func<FoodFunction>[]
+            {
+                () => new ScavengeFoodFunction1(),
+                () => new ScavengeFoodFunction2(),
+                () => new FarmFoodFunction1()
+            };
+            return lambdas[Genome.Rnd.Next(lambdas.Length)].Invoke();
         }
     }
 }

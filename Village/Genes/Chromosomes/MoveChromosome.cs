@@ -9,14 +9,13 @@ namespace Village.Genes.Chromosomes
     {
         public const int GeneCount = 5;
         private const double MUTATION_CHANCE = 0.01;
-        public readonly List<MoveFunction> Functions;
+        public readonly List<MoveFunction> Functions = new List<MoveFunction>();
 
         public MoveChromosome()
         {
-            Functions = new List<MoveFunction>();
             for (int i = 0; i < GeneCount; i++)
             {
-                Functions.Add(new IdiotMoveFunction());
+                Functions.Add(new NoDiagonalMoveFunction());
             }
         }
 
@@ -33,9 +32,11 @@ namespace Village.Genes.Chromosomes
                     foreach (var t in genomes)
                     {
                         q -= t.Item2;
-                        if (q > 0) continue;
-                        chosenGenome = t.Item1;
-                        break;
+                        if (q <= 0)
+                        {
+                            chosenGenome = t.Item1;
+                            break;
+                        }
                     }
                     Functions.Add(chosenGenome.GetChromosomes().Item2.Functions[i]);
                 }
@@ -49,7 +50,12 @@ namespace Village.Genes.Chromosomes
 
         private static MoveFunction GetMutated()
         {
-            return new IdiotMoveFunction();
+            var lambdas = new Func<MoveFunction>[]
+            {
+                () => new NoDiagonalMoveFunction(),
+                () => new NormalMoveFunction()
+            };
+            return lambdas[Genome.Rnd.Next(lambdas.Length)].Invoke();
         }
     }
 }

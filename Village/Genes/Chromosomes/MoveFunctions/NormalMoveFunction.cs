@@ -3,7 +3,7 @@ using Village.Map;
 
 namespace Village.Genes.Chromosomes.MoveFunctions
 {
-    public class IdiotMoveFunction : MoveFunction
+    public class NormalMoveFunction : MoveFunction
     {
         public override ActionList GetActions(Board b, Agent a, Field dest)
         {
@@ -14,7 +14,7 @@ namespace Village.Genes.Chromosomes.MoveFunctions
 
         public override string GetName()
         {
-            return "IdiotMove I";
+            return "NormalMove I";
         }
     }
 }

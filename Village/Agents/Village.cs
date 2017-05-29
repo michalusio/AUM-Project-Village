@@ -13,6 +13,11 @@ namespace Village.Agents
         private const int REQUIRED_FOOD = 500;
         private const float BASE_EAT = 3;
         private const float BASE_AGE = 0.01f;
+        private const float BREED_CHANCE = 0.001f;
+
+        public readonly Graph FoodGraph;
+        public readonly Graph PopGraph;
+        private int _t;
 
         public Village(Board b)
         {
@@ -23,6 +28,9 @@ namespace Village.Agents
                 GetAgentList.Add(new Agent(b, this));
             }
             GetTotalFood = 500;
+            _t = 0;
+            FoodGraph = new Graph();
+            PopGraph = new Graph();
         }
 
         //Getters
@@ -65,11 +73,18 @@ namespace Village.Agents
                     GetAgentList.RemoveAt(i);
                 }
             }
+            if (_t >= 3)
+            {
+                _t = 0;
+                FoodGraph.AddPoint(GetTotalFood);
+                PopGraph.AddPoint(GetAgentList.Count);
+            }
+            else _t++;
         }
 
-        public void ReproduceAgents(Agent agentA, Agent agentB)
+        public void ReproduceAgents()
         {
-            while (FoodCheck())
+            while (FoodCheck() && Genome.Rnd.NextDouble()<BREED_CHANCE*(GetTotalFood*0.01f))
             {
                 GetAgentList.Add(new Agent(_board, this));
                 GetTotalFood -= REQUIRED_FOOD;

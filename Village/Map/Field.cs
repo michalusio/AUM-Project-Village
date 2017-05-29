@@ -1,21 +1,26 @@
+using System;
+
 namespace Village.Map
 {
     public class Field
     {
-        private readonly bool _cultivation; // czy uprawa jest możliwa
+        private float _cultivation; // czy uprawa jest możliwa
         private readonly bool _base; // czy to pole wioski
         private Food _food; //
 
         public int X, Y;
 
-        public Field(bool cultivation, bool _base, float foodValue)
+        public readonly Board Board;
+
+        public Field(Board b, bool cultivation, bool _base, float foodValue)
         {
+            Board = b;
             this._base = _base;
-            _cultivation = cultivation;
+            _cultivation = cultivation?1:0;
             _food = new Food(foodValue, null);
         }
 
-        public Field(bool cultivation, bool _base) : this(cultivation, _base, 0)
+        public Field(Board b, bool cultivation, bool _base) : this(b, cultivation, _base, 0)
         {
         }
 
@@ -25,6 +30,11 @@ namespace Village.Map
         }
 
         public bool GetCultivation()
+        {
+            return _cultivation>0.75f;
+        }
+
+        public float GetGrass()
         {
             return _cultivation;
         }
@@ -37,6 +47,30 @@ namespace Village.Map
         public void SetFood(Food f)
         {
             _food = f;
+        }
+
+        public float DistSqr(Field field)
+        {
+            return Extensions.Sqr(X - field.X) + Extensions.Sqr(Y - field.Y);
+        }
+
+        public Field GetRelative(int x, int y)
+        {
+            if (Board.IsValid(x + X, y + Y))
+            {
+                return Board.FullBoard[x + X, y + Y];
+            }
+            return this;
+        }
+
+        public void SetCultivation(bool cult)
+        {
+            _cultivation = cult?1:0;
+        }
+
+        public void AddCultivation(float f)
+        {
+            _cultivation = Math.Min(1, _cultivation + f);
         }
     }
 }

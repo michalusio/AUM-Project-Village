@@ -7,7 +7,6 @@ namespace Village.Genes
 {
     public class Genome
     {
-        public const float MutationChance = 0.01f;
         public const float StatRange = 5f;
         public static readonly Random Rnd = new Random();
 
@@ -34,12 +33,10 @@ namespace Village.Genes
                 _mchromosome = new MoveChromosome(genomes);
 
                 _strength = genomes.Sum(a => a.Item1._strength * a.Item2) / sum;
-                if (Rnd.NextDouble() < MutationChance) _strength += (float)(Rnd.NextDouble() - 0.5) * StatRange;
-                _strength = Math.Max(_strength, 25f);
+                _strength += (float)(Rnd.NextDouble() - 0.5) * StatRange;
 
                 _durability = genomes.Sum(a => a.Item1._durability * a.Item2) / sum;
-                if (Rnd.NextDouble() < MutationChance) _durability += (float)(Rnd.NextDouble() - 0.5) * StatRange;
-                _durability = Math.Max(_durability, 25f);
+                _durability += (float)(Rnd.NextDouble() - 0.5) * StatRange;
             }
         }
 

@@ -52,6 +52,7 @@ namespace Village.Agents
 
     public enum ActionType
     {
-        Nothing,Pathing,Moving,PickingUpFood,ReturningFood
+        Nothing,Pathing,Moving,PickingUpFood,ReturningFood,
+        FarmingArea
     }
 }
