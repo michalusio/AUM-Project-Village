@@ -29,7 +29,7 @@ namespace Village
         public Form1()
         {
             InitializeComponent();
-            _speed = 4;
+            _speed = 0;
             _tick = 0;
         }
 
@@ -38,7 +38,7 @@ namespace Village
             ui.Width = ClientSize.Width;
             ui.Height = ClientSize.Height;
 
-            _camera = new PointF(240,240);
+            _camera = new PointF(800, 800);
             _zoom = 1;
             _sizeRect = 16; //size for one field
 
@@ -63,31 +63,45 @@ namespace Village
         {
             _camera.X += _moveDir.X;
             _camera.Y += _moveDir.Y;
-            if (_speed != 4)
+            if (_speed > 0 && _speed < 4)
             {
                 _tick++;
                 if (_tick >= _speed)
                 {
                     _tick = 0;
-                    _board.GetVillage().TickFood();
-                    _board.GetVillage().TickAge();
-                    _board.GetVillage().ReproduceAgents();
-                    foreach (var agent in _board.GetVillage().GetAgentList)
-                    {
-                        agent.DoAction();
-                    }
-                    for (int i = 0; i < GRASS_GROWTH*_board.FullBoard.Length/(60*60); i++)
-                    {
-                        int x = Genome.Rnd.Next(_board.FullBoard.GetLength(0));
-                        int y = Genome.Rnd.Next(_board.FullBoard.GetLength(1));
-                        if (_board.FullBoard[x, y].GetGrass()<0.99f && IsNearGrass(_board.FullBoard[x,y]))
-                        {
-                            _board.FullBoard[x,y].AddCultivation(0.3f);
-                        }
-                    }
+                    TickGame();
                 }
             }
+            if (_speed > 3)
+            {
+                for(int i = 0; i < _speed-2; ++i) TickGame();
+            }
             ui.Invalidate();
+        }
+
+        private void TickGame()
+        {
+            _board.GetVillage().TickFood();
+            _board.GetVillage().TickAge();
+            _board.GetVillage().ReproduceAgents();
+            foreach (var agent in _board.GetVillage().GetAgentList)
+            {
+                agent.DoAction();
+            }
+            for (int i = 0; i < GRASS_GROWTH * _board.FullBoard.Length / (60 * 60); i++)
+            {
+                int x = Genome.Rnd.Next(_board.FullBoard.GetLength(0));
+                int y = Genome.Rnd.Next(_board.FullBoard.GetLength(1));
+                var f = _board.FullBoard[x, y];
+                if (f.GetGrass() < 0.99f && IsNearGrass(f))
+                {
+                    f.AddCultivation(0.15f);
+                }
+                else
+                {
+                    if (f.GetGrass()>0.25f) f.AddCultivation(0.05f);
+                }
+            }
         }
 
         private bool IsNearGrass(Field f)
@@ -172,7 +186,13 @@ namespace Village
             if (e.KeyCode == Keys.D1) _speed = 3;
             if (e.KeyCode == Keys.D2) _speed = 2;
             if (e.KeyCode == Keys.D3) _speed = 1;
-            if (e.KeyCode == Keys.D0) _speed = 4;
+            if (e.KeyCode == Keys.D4) _speed = 4;
+            if (e.KeyCode == Keys.D5) _speed = 5;
+            if (e.KeyCode == Keys.D6) _speed = 6;
+            if (e.KeyCode == Keys.D7) _speed = 7;
+            if (e.KeyCode == Keys.D8) _speed = 8;
+            if (e.KeyCode == Keys.D9) _speed = 9;
+            if (e.KeyCode == Keys.Oemtilde) _speed = 0;
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -205,7 +225,7 @@ namespace Village
         {
             float height = 96 + Math.Max(FoodChromosome.GeneCount, MoveChromosome.GeneCount) * 24;
             g.FillRectangle(Brushes.Bisque,area.Width*0.8f,0,area.Width*0.2f, height);
-            g.DrawString("Total food gathered: "+_selectedAgent.GetFood,_fontArial,Brushes.Black, area.Width * 0.8f, 0);
+            g.DrawString("Food/Age gathered: "+_selectedAgent.GetFood/_selectedAgent.GetAge,_fontArial,Brushes.Black, area.Width * 0.8f, 0);
             g.DrawString("Age: "+_selectedAgent.GetAge,_fontArial,Brushes.Black,area.Width*0.8f,24);
             g.DrawString("Action: "+_selectedAgent.GetAction().Type,_fontArial,Brushes.Black,area.Width*0.8f,48);
             var sizeF=g.MeasureString("Genome:", _fontArial);

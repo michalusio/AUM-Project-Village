@@ -8,7 +8,7 @@ namespace Village.Genes.Chromosomes
     public class MoveChromosome : Chromosome
     {
         public const int GeneCount = 5;
-        private const double MUTATION_CHANCE = 0.01;
+        private const double MUTATION_CHANCE = 0.055;
         public readonly List<MoveFunction> Functions = new List<MoveFunction>();
 
         public MoveChromosome()

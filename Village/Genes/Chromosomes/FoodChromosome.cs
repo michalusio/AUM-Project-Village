@@ -8,7 +8,7 @@ namespace Village.Genes.Chromosomes
     public class FoodChromosome : Chromosome
     {
         public const int GeneCount = 5;
-        private const double MUTATION_CHANCE = 0.01;
+        private const double MUTATION_CHANCE = 0.055;
         public readonly List<FoodFunction> Functions = new List<FoodFunction>();
 
         public FoodChromosome()
@@ -54,7 +54,8 @@ namespace Village.Genes.Chromosomes
             {
                 () => new ScavengeFoodFunction1(),
                 () => new ScavengeFoodFunction2(),
-                () => new FarmFoodFunction1()
+                () => new FarmFoodFunction1(),
+                () => new FarmFoodFunction2()
             };
             return lambdas[Genome.Rnd.Next(lambdas.Length)].Invoke();
         }

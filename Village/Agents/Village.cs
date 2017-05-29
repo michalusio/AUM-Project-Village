@@ -11,7 +11,7 @@ namespace Village.Agents
 
         private const int AGENT_START_COUNT = 3;
         private const int REQUIRED_FOOD = 500;
-        private const float BASE_EAT = 3;
+        private const float BASE_EAT = 2.5f;
         private const float BASE_AGE = 0.01f;
         private const float BREED_CHANCE = 0.001f;
 
@@ -39,7 +39,7 @@ namespace Village.Agents
 
         private bool FoodCheck()
         {
-            return GetTotalFood >= REQUIRED_FOOD*1.25;
+            return GetTotalFood >= REQUIRED_FOOD*1.25f;
         }
 
         public void TickFood()

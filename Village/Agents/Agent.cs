@@ -19,7 +19,7 @@ namespace Village.Agents
         private readonly Board _board;
         private readonly Village _village;
 
-        public Agent(Board b,Village v)
+        public Agent(Board b, Village v)
         {
             _board = b;
             _village = v;
@@ -98,7 +98,7 @@ namespace Village.Agents
                         _actionsToDo.MarkAsDone();
                         break;
                     case ActionType.FarmingArea:
-                        if (_farm>=1500/GetGenome().GetDurability())
+                        if (_farm>=9000/GetGenome().GetDurability())
                         {
                             _farm = 0;
                             for (int i = -1; i < 2; i++)
@@ -108,7 +108,7 @@ namespace Village.Agents
                                     Field f = GetField().GetRelative(i, j);
                                     if (f.GetCultivation() && f.GetFood().Value < 1)
                                     {
-                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.5f, this));
+                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.25f, this));
                                         f.SetCultivation(false);
                                     }
                                 }

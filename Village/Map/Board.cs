@@ -8,7 +8,7 @@ namespace Village.Map
     {
         private const int NODE_COUNT = 15;
         private const float FOOD_SIZE = 5;
-        private const int FOOD_COUNT = 150;
+        private const int FOOD_COUNT = 100;
 
         private readonly Agents.Village _village;
         public Field[,] FullBoard;
