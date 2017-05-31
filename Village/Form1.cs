@@ -23,7 +23,10 @@ namespace Village
         private int _tick;
         private readonly Font _fontArial = new Font("Arial Black", 10);
 
-        private Image[] _cabbages;
+        private Image[] _cabbages, _carrots;
+        private Image _heldCarrot;
+
+        private Brush[] FieldBrushes;
 
         public Form1()
         {
@@ -48,6 +51,22 @@ namespace Village
             _cabbages[4] = Image.FromFile("textures/Cabbage_4.png");
             _cabbages[5] = Image.FromFile("textures/Cabbage_5.png");
             _cabbages[6] = Image.FromFile("textures/Cabbage_6.png");
+
+            _carrots = new Image[5];
+            _carrots[0] = Image.FromFile("textures/Carrot_0.png");
+            _carrots[1] = Image.FromFile("textures/Carrot_1.png");
+            _carrots[2] = Image.FromFile("textures/Carrot_2.png");
+            _carrots[3] = Image.FromFile("textures/Carrot_3.png");
+            _carrots[4] = Image.FromFile("textures/Carrot_4.png");
+
+            _heldCarrot = Image.FromFile("textures/Carrot_5.png");
+
+            FieldBrushes = new SolidBrush[101];
+            for(int i = 0; i < FieldBrushes.Length; ++i)
+            {
+                FieldBrushes[i] = new SolidBrush(InterpolateColor(Color.SaddleBrown, Color.Green, i / 100f));
+            }
+
             _board = new Board(100, 100, new PointF(50,50));
         }
 
@@ -64,7 +83,7 @@ namespace Village
             if (simSpeed.Value > 0 && simSpeed.Value < 4)
             {
                 _tick++;
-                if (_tick >= simSpeed.Value)
+                if (_tick >= 4-simSpeed.Value)
                 {
                     _tick = 0;
                     TickGame();
@@ -124,11 +143,12 @@ namespace Village
                         (i * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
                         (j * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
                 g.FillRectangle(
-                    f.GetBase()?Brushes.Black : new SolidBrush(InterpolateColor(Color.SaddleBrown, Color.Green, f.GetGrass())),
+                    f.GetBase()?Brushes.Black : FieldBrushes[(int)(f.GetGrass()*99)],
                     new RectangleF(p.X, p.Y, s.Width, s.Height));
                 if (f.GetFood().Value > 0)
                 {
-                    g.DrawImage(_cabbages[(i*_board.FullBoard.GetLength(0)+j)%_cabbages.Length], new RectangleF(p.X, p.Y, s.Width,s.Height));
+                    var tab = f.GetFood().Level == 1 ? _cabbages : _carrots;
+                    g.DrawImage(tab[(i*_board.FullBoard.GetLength(0)+j)%tab.Length], new RectangleF(p.X, p.Y, s.Width,s.Height));
                 }
             }
 
@@ -143,7 +163,13 @@ namespace Village
                     s.Height);
                 if (agent.GetHoldedFood > 0)
                 {
-                    g.DrawImage(_cabbages[Math.Abs(agent.GetHashCode())%_cabbages.Length],new RectangleF(p.X, p.Y, s.Width*0.75f,s.Height*0.75f));
+                    if (agent.GetHoldedType == 1)
+                    {
+                        g.DrawImage(_cabbages[Math.Abs(agent.GetHashCode()) % _cabbages.Length], new RectangleF(p.X, p.Y, s.Width * 0.75f, s.Height * 0.75f));
+                    }else
+                    {
+                        g.DrawImage(_heldCarrot, new RectangleF(p.X, p.Y, s.Width * 0.75f, s.Height * 0.75f));
+                    }
                 }
             }
             if (_selectedAgent != null)

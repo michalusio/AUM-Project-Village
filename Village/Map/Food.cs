@@ -6,11 +6,17 @@ namespace Village.Map
     {
         public float Value;
         public readonly Agent Farmer;
+        public readonly int Level;
+        public Food(float var, Agent farmer) : this(var, farmer, 1)
+        {
+        }
 
-        public Food(float var, Agent farmer)
+        public Food(float var, Agent farmer, int level)
         {
             Value = var;
             Farmer = farmer;
+            Level = level;
         }
+
     }
 }

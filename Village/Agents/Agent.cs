@@ -37,6 +37,7 @@ namespace Village.Agents
         public float GetAge { get; set; }
         public float GetFood { get; set; }
         public float GetHoldedFood { get; set; }
+        public int GetHoldedType { get; set; }
 
         
         public void SetCoordinates(float x, float y)
@@ -88,13 +89,15 @@ namespace Village.Agents
                             GetField().GetFood().Farmer.GetFood += foodTaken;
                         }
                         GetHoldedFood += foodTaken;
-                        GetField().SetFood(new Food(GetField().GetFood().Value-foodTaken,GetField().GetFood().Farmer));
+                        GetHoldedType = GetField().GetFood().Level;
+                        GetField().SetFood(new Food(GetField().GetFood().Value-foodTaken,GetField().GetFood().Farmer, GetHoldedType));
                         _actionsToDo.MarkAsDone();
                         break;
                     case ActionType.ReturningFood:
-                        GetFood += GetHoldedFood;
-                        _village.GetTotalFood += GetHoldedFood;
+                        GetFood += GetHoldedFood*GetHoldedType;
+                        _village.GetTotalFood += GetHoldedFood* GetHoldedType;
                         GetHoldedFood = 0;
+                        GetHoldedType = 0;
                         _actionsToDo.MarkAsDone();
                         break;
                     case ActionType.FarmingArea:
@@ -108,7 +111,7 @@ namespace Village.Agents
                                     Field f = GetField().GetRelative(i, j);
                                     if (f.GetCultivation() && f.GetFood().Value < 1)
                                     {
-                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.35f, this));
+                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.35f, this, a.Level));
                                         f.SetCultivation(false);
                                     }
                                 }

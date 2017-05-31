@@ -135,6 +135,7 @@ namespace Village
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ClientSize = new System.Drawing.Size(884, 861);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.agingSpeed);
@@ -146,7 +147,7 @@ namespace Village
             this.Controls.Add(this.ui);
             this.DoubleBuffered = true;
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(900, 900);
+            this.MinimumSize = new System.Drawing.Size(900, 858);
             this.Name = "Form1";
             this.Text = "Village Project";
             this.Load += new System.EventHandler(this.Form1_Load);

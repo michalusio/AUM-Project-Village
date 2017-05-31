@@ -118,6 +118,12 @@
     <Content Include="bin\Release\textures\Cabbage_4.png" />
     <Content Include="bin\Release\textures\Cabbage_5.png" />
     <Content Include="bin\Release\textures\Cabbage_6.png" />
+    <Content Include="bin\Release\textures\Carrot_0.png" />
+    <Content Include="bin\Release\textures\Carrot_1.png" />
+    <Content Include="bin\Release\textures\Carrot_2.png" />
+    <Content Include="bin\Release\textures\Carrot_3.png" />
+    <Content Include="bin\Release\textures\Carrot_4.png" />
+    <Content Include="bin\Release\textures\Carrot_5.png" />
     <Content Include="bin\Release\Village.exe" />
     <Content Include="bin\Release\Village.pdb" />
     <Content Include="bin\Release\Village.vshost.exe" />

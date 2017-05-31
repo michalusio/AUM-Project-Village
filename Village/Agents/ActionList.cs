@@ -42,11 +42,16 @@ namespace Village.Agents
         public readonly ActionType Type;
         public readonly Field Destination;
         public static readonly Action Null=new Action(ActionType.Nothing,null);
+        public readonly int Level;
+        public Action(ActionType type, Field dest) : this(type,dest,1)
+        {
+        }
 
-        public Action(ActionType type, Field dest)
+        public Action(ActionType type, Field dest, int level)
         {
             Type = type;
             Destination = dest;
+            Level = level;
         }
     }
 

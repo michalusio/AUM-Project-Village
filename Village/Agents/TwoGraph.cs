@@ -25,7 +25,7 @@ namespace Village.Agents
 
         public void Plot(Graphics g, Rectangle area)
         {
-            float maxY = float.MinValue;
+            float maxY = -10000;
             for (var index = 0; index < _points1.Count; index++)
             {
                 var p = _points1[index];
