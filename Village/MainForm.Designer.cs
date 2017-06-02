@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Village
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.

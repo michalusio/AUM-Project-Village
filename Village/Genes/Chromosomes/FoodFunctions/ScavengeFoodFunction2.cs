@@ -12,15 +12,15 @@ namespace Village.Genes.Chromosomes.FoodFunctions
         {
             var aList=new ActionList();
             List<Field> foodFields=new List<Field>();
-            for (int i = -9; i < 10; i++)
+            for (int i = -11; i < 12; i++)
             {
                 int X = (int) a.GetCurrentX + i;
-                for (int j = -9; j < 10; j++)
+                for (int j = -11; j < 12; j++)
                 {
                     int Y = (int)a.GetCurrentY + j;
                     if (b.IsValid(X,Y))
                     {
-                        if (b.FullBoard[X, Y].GetFood().Value >= a.GetGenome().GetStrength()*0.25f)
+                        if (b.FullBoard[X, Y].GetFood().Value >= 0)
                         {
                             foodFields.Add(b.FullBoard[X, Y]);
                         }

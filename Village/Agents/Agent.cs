@@ -28,6 +28,7 @@ namespace Village.Agents
             GetAge = 0;
             GetFood = 0;
             GetHoldedFood = 0;
+            GetHoldedType = 0;
             _actionsToDo = new ActionList();
         }
 
@@ -37,6 +38,7 @@ namespace Village.Agents
         public float GetAge { get; set; }
         public float GetFood { get; set; }
         public float GetHoldedFood { get; set; }
+        public int GetHoldedType { get; set; }
 
         
         public void SetCoordinates(float x, float y)
@@ -83,18 +85,20 @@ namespace Village.Agents
                         break;
                     case ActionType.PickingUpFood:
                         float foodTaken = Math.Min(_genome.GetStrength()-GetHoldedFood,GetField().GetFood().Value);
+                        GetHoldedType = GetField().GetFood().Type;
                         if (GetField().GetFood().Farmer != null)
                         {
-                            GetField().GetFood().Farmer.GetFood += foodTaken;
+                            GetField().GetFood().Farmer.GetFood += foodTaken*GetHoldedType;
                         }
                         GetHoldedFood += foodTaken;
                         GetField().SetFood(new Food(GetField().GetFood().Value-foodTaken,GetField().GetFood().Farmer));
                         _actionsToDo.MarkAsDone();
                         break;
                     case ActionType.ReturningFood:
-                        GetFood += GetHoldedFood;
-                        _village.GetTotalFood += GetHoldedFood;
+                        GetFood += GetHoldedFood*GetHoldedType;
+                        _village.GetTotalFood += GetHoldedFood*GetHoldedType;
                         GetHoldedFood = 0;
+                        GetHoldedType = 0;
                         _actionsToDo.MarkAsDone();
                         break;
                     case ActionType.FarmingArea:
@@ -108,7 +112,7 @@ namespace Village.Agents
                                     Field f = GetField().GetRelative(i, j);
                                     if (f.GetCultivation() && f.GetFood().Value < 1)
                                     {
-                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.35f, this));
+                                        f.SetFood(new Food(GetGenome().GetStrength() * 0.35f, this,a.Level));
                                         f.SetCultivation(false);
                                     }
                                 }

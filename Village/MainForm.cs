@@ -9,12 +9,12 @@ using Village.Map;
 
 namespace Village
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private const float CAMERA_SPEED = 5;
         private const int GRASS_GROWTH = 20;
 
-        private Board _board;
+        public Board Board;
         private PointF _camera;
         private PointF _moveDir;
         private int _sizeRect;
@@ -23,11 +23,15 @@ namespace Village
         private int _tick;
         private readonly Font _fontArial = new Font("Arial Black", 10);
 
-        private Image[] _cabbages;
+        private Image[] _cabbages, _carrots;
+        private Image _holdCarrot;
 
-        public Form1()
+        public GraphForm Graphs;
+
+        public MainForm()
         {
             InitializeComponent();
+            Graphs = new GraphForm {F = this};
             _tick = 0;
         }
 
@@ -48,13 +52,23 @@ namespace Village
             _cabbages[4] = Image.FromFile("textures/Cabbage_4.png");
             _cabbages[5] = Image.FromFile("textures/Cabbage_5.png");
             _cabbages[6] = Image.FromFile("textures/Cabbage_6.png");
-            _board = new Board(100, 100, new PointF(50,50));
+
+            _carrots = new Image[5];
+            _carrots[0] = Image.FromFile("textures/Carrot_0.png");
+            _carrots[1] = Image.FromFile("textures/Carrot_1.png");
+            _carrots[2] = Image.FromFile("textures/Carrot_2.png");
+            _carrots[3] = Image.FromFile("textures/Carrot_3.png");
+            _carrots[4] = Image.FromFile("textures/Carrot_4.png");
+
+            _holdCarrot = Image.FromFile("textures/Carrot_5.png");
+            Board = new Board(100, 100, new PointF(50,50));
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             ui.Width = ClientSize.Width;
             ui.Height = ClientSize.Height-150;
+            ui.Invalidate();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -64,7 +78,7 @@ namespace Village
             if (simSpeed.Value > 0 && simSpeed.Value < 4)
             {
                 _tick++;
-                if (_tick >= simSpeed.Value)
+                if (_tick >= 4-simSpeed.Value)
                 {
                     _tick = 0;
                     TickGame();
@@ -79,18 +93,18 @@ namespace Village
 
         private void TickGame()
         {
-            _board.GetVillage().TickFood();
-            _board.GetVillage().TickAge(agingSpeed.Value/5f);
-            _board.GetVillage().ReproduceAgents();
-            foreach (var agent in _board.GetVillage().GetAgentList)
+            Board.GetVillage().TickFood();
+            Board.GetVillage().TickAge(agingSpeed.Value/5f);
+            Board.GetVillage().ReproduceAgents();
+            foreach (var agent in Board.GetVillage().GetAgentList)
             {
                 agent.DoAction();
             }
-            for (int i = 0; i < GRASS_GROWTH * _board.FullBoard.Length / (60 * 60); i++)
+            for (int i = 0; i < GRASS_GROWTH * Board.FullBoard.Length / (60 * 60); i++)
             {
-                int x = Genome.Rnd.Next(_board.FullBoard.GetLength(0));
-                int y = Genome.Rnd.Next(_board.FullBoard.GetLength(1));
-                var f = _board.FullBoard[x, y];
+                int x = Genome.Rnd.Next(Board.FullBoard.GetLength(0));
+                int y = Genome.Rnd.Next(Board.FullBoard.GetLength(1));
+                var f = Board.FullBoard[x, y];
                 if (f.GetGrass() < 0.99f && IsNearGrass(f))
                 {
                     f.AddCultivation(grassGrowth.Value/20f);
@@ -116,10 +130,10 @@ namespace Village
             g.SmoothingMode=SmoothingMode.None;
             Rectangle area = e.ClipRectangle;
             SizeF s = new SizeF(_sizeRect * _zoom, _sizeRect * _zoom);
-            for (var i = 0; i < _board.FullBoard.GetLength(0); i++)
-            for (var j = 0; j < _board.FullBoard.GetLength(1); j++)
+            for (var i = 0; i < Board.FullBoard.GetLength(0); i++)
+            for (var j = 0; j < Board.FullBoard.GetLength(1); j++)
             {
-                Field f = _board.FullBoard[i, j];
+                Field f = Board.FullBoard[i, j];
                     PointF p= new PointF(
                         (i * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
                         (j * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
@@ -128,11 +142,12 @@ namespace Village
                     new RectangleF(p.X, p.Y, s.Width, s.Height));
                 if (f.GetFood().Value > 0)
                 {
-                    g.DrawImage(_cabbages[(i*_board.FullBoard.GetLength(0)+j)%_cabbages.Length], new RectangleF(p.X, p.Y, s.Width,s.Height));
+                    var tab = f.GetFood().Type == 1 ? _cabbages : _carrots;
+                    g.DrawImage(tab[(i*Board.FullBoard.GetLength(0)+j)% tab.Length], new RectangleF(p.X, p.Y, s.Width,s.Height));
                 }
             }
 
-            foreach (var agent in _board.GetVillage().GetAgentList)
+            foreach (var agent in Board.GetVillage().GetAgentList)
             {
                 PointF p = new PointF(
                     (agent.GetCurrentX * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
@@ -143,7 +158,11 @@ namespace Village
                     s.Height);
                 if (agent.GetHoldedFood > 0)
                 {
-                    g.DrawImage(_cabbages[Math.Abs(agent.GetHashCode())%_cabbages.Length],new RectangleF(p.X, p.Y, s.Width*0.75f,s.Height*0.75f));
+                    g.DrawImage(
+                        agent.GetHoldedType == 1
+                            ? _cabbages[Math.Abs(agent.GetHashCode()) % _cabbages.Length]
+                            : _holdCarrot,
+                        new RectangleF(p.X, p.Y, s.Width * 0.75f, s.Height * 0.75f));
                 }
             }
             if (_selectedAgent != null)
@@ -154,14 +173,14 @@ namespace Village
                     s.Width,
                     s.Height);
             }
-            g.FillRectangle(Brushes.Bisque, 0,0,199,748);
-            g.DrawString("Food in Village: "+_board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,0,0);
+            g.FillRectangle(Brushes.Bisque, 0,0,199,628);
+            g.DrawString("Food in Village: "+Board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,0,0);
             if (_selectedAgent != null) DrawAgentDescription(g,area);
-            _board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,20,200,200));
-            g.DrawString("Agents in Village: " + _board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 264);
-            _board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 284, 200, 200));
+            Board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,20,200,200));
+            g.DrawString("Agents in Village: " + Board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 264);
+            Board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 284, 200, 200));
             g.DrawString("Scavenge genes in Village:", _fontArial, Brushes.BlueViolet, 0, 508);
-            _board.GetVillage().Genes.Plot(g, new Rectangle(0, 528, 200, 100));
+            Board.GetVillage().Genes.Plot(g, new Rectangle(0, 528, 200, 100));
         }
 
         private Color InterpolateColor(Color a, Color b, float t)
@@ -187,10 +206,8 @@ namespace Village
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta < 0)
-                _zoom *= 0.9f;
-            if (e.Delta > 0)
-                if (_zoom * 1.1f <= 5f) _zoom *= 1.1f;
+            if (e.Delta < 0) _zoom *= 0.9f;
+            else if (_zoom * 1.1f <= 5f) _zoom *= 1.1f;
         }
 
         private void ui_MouseClick(object sender, MouseEventArgs e)
@@ -199,7 +216,7 @@ namespace Village
             float realY = ((e.Y - ui.Height * 0.5f) / _zoom + _camera.Y) / _sizeRect;
             Agent a = null;
             float minD = float.MaxValue;
-            foreach (var agent in _board.GetVillage().GetAgentList)
+            foreach (var agent in Board.GetVillage().GetAgentList)
             {
                 float d = Extensions.Sqr(agent.GetCurrentX - realX) + Extensions.Sqr(agent.GetCurrentY - realY);
                 if (d < 5 && d < minD)
@@ -241,7 +258,7 @@ namespace Village
         private void button1_Click(object sender, EventArgs e)
         {
             _selectedAgent = null;
-            _board = new Board(100, 100, new PointF(50, 50));
+            Graphs.Show();
         }
     }
 }

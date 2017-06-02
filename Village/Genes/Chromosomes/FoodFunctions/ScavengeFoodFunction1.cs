@@ -12,10 +12,10 @@ namespace Village.Genes.Chromosomes.FoodFunctions
         {
             var aList=new ActionList();
             List<Field> foodFields=new List<Field>();
-            for (int i = -5; i < 6; i++)
+            for (int i = -7; i < 8; i++)
             {
                 int X = (int) a.GetCurrentX + i;
-                for (int j = -5; j < 6; j++)
+                for (int j = -7; j < 8; j++)
                 {
                     int Y = (int)a.GetCurrentY + j;
                     if (b.IsValid(X,Y))

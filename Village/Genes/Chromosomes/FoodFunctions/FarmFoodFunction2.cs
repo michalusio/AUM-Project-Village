@@ -29,7 +29,7 @@ namespace Village.Genes.Chromosomes.FoodFunctions
             }
             if (foodFields.Count > 0)
             {
-                aList.AddAction(new Action(ActionType.FarmingArea, foodFields[Genome.Rnd.Next(foodFields.Count)]));
+                aList.AddAction(new Action(ActionType.FarmingArea, foodFields[Genome.Rnd.Next(foodFields.Count)],2));
             }
             else
             {

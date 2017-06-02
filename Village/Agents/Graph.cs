@@ -11,7 +11,7 @@ namespace Village.Agents
         private readonly List<PointF> _points = new List<PointF>();
         private float _pointMod = 0.01f;
         private int _pointCount = 100;
-        private float maxYEver = 5;
+        private float _maxYEver = 5;
 
         public int PointCount
         {
@@ -21,6 +21,8 @@ namespace Village.Agents
             }
         }
 
+        public int Points => _points.Count;
+
         public void Plot(Graphics g, Rectangle area)
         {
             float maxY = float.MinValue;
@@ -28,12 +30,13 @@ namespace Village.Agents
             {
                 if (maxY < p.Y) maxY = p.Y;
             }
-            maxYEver = Math.Max(maxYEver, maxY*1.25f);
+            _maxYEver = Math.Max(_maxYEver, maxY*1.25f);
+            var pen = new Pen(Color, 2);
             for (var index = 1; index < _points.Count; index++)
             {
                 var p = _points[index-1];
                 var p2 = _points[index];
-                g.DrawLine(new Pen(Color,2), area.Left+p.X*area.Width,area.Bottom-p.Y*area.Height/ maxYEver, area.Left + p2.X * area.Width, area.Bottom - p2.Y * area.Height / maxYEver);
+                g.DrawLine(pen, area.Left+p.X*area.Width,area.Bottom-p.Y*area.Height/ _maxYEver, area.Left + p2.X * area.Width, area.Bottom - p2.Y * area.Height / _maxYEver);
             }
             g.DrawRectangle(Pens.Black, area);
         }
