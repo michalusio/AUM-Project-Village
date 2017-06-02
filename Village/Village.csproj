@@ -101,7 +101,6 @@
     <None Include="bin\Release\Village.exe.config" />
     <None Include="bin\Release\Village.vshost.exe.config" />
     <None Include="bin\Release\Village.vshost.exe.manifest" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
