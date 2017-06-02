@@ -21,11 +21,9 @@ namespace Village.Agents
             }
         }
 
-        public int Points => _points.Count;
-
         public void Plot(Graphics g, Rectangle area)
         {
-            float maxY = float.MinValue;
+            float maxY = -1000000;
             foreach (var p in _points)
             {
                 if (maxY < p.Y) maxY = p.Y;

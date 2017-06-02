@@ -52,12 +52,6 @@
     <Compile Include="Agents\Graph.cs" />
     <Compile Include="Agents\Village.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="GraphForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GraphForm.Designer.cs">
-      <DependentUpon>GraphForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Genes\Chromosomes\FoodChromosome.cs" />
     <Compile Include="Genes\Chromosomes\FoodFunction.cs" />
     <Compile Include="Genes\Chromosomes\FoodFunctions\FarmFoodFunction2.cs" />
@@ -69,6 +63,12 @@
     <Compile Include="Genes\Chromosomes\MoveFunction.cs" />
     <Compile Include="Genes\Chromosomes\FoodFunctions\ScavengeFoodFunction1.cs" />
     <Compile Include="Genes\Chromosomes\MoveFunctions\NoDiagonalMoveFunction.cs" />
+    <Compile Include="GraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GraphForm.Designer.cs">
+      <DependentUpon>GraphForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Map\Board.cs" />
     <Compile Include="Map\Field.cs" />
     <Compile Include="Map\Food.cs" />
@@ -82,9 +82,7 @@
     <Compile Include="Genes\Genome.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="GraphForm.resx">
-      <DependentUpon>GraphForm.cs</DependentUpon>
-    </EmbeddedResource>
+    <EmbeddedResource Include="GraphForm.resx" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -103,6 +101,7 @@
     <None Include="bin\Release\Village.exe.config" />
     <None Include="bin\Release\Village.vshost.exe.config" />
     <None Include="bin\Release\Village.vshost.exe.manifest" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

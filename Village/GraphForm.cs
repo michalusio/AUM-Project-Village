@@ -18,8 +18,8 @@ namespace Village
         {
             Graphics g = e.Graphics;
             var third = e.ClipRectangle.Height / 3;
-            var graph = F.Board.GetVillage().WholeFoodGraph;
             var w = 100000;
+            var graph = F.Board.GetVillage().WholeFoodGraph;
             graph.Plot(g, new Rectangle(((e.ClipRectangle.Width - w) * hScrollBar1.Value) / 100, 0, w, third));
             graph = F.Board.GetVillage().WholePopGraph;
             graph.Plot(g, new Rectangle(((e.ClipRectangle.Width - w) * hScrollBar1.Value) / 100, third, w, third));

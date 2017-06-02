@@ -11,9 +11,9 @@ namespace Village.Agents
         private readonly Board _board;
 
         private const int AGENT_START_COUNT = 3;
-        private const int REQUIRED_FOOD = 1000;
+        private const int REQUIRED_FOOD = 500;
         private const float BASE_EAT = 2.5f;
-        private const float BASE_AGE = 0.005f;
+        private const float BASE_AGE = 0.01f;
         private const float BREED_CHANCE = 0.001f;
 
 
@@ -22,7 +22,8 @@ namespace Village.Agents
         public readonly Graph PopGraph;
         public readonly TwoGraph Genes;
 
-        public readonly Graph WholeFoodGraph, WholePopGraph;
+        public readonly Graph WholeFoodGraph;
+        public readonly Graph WholePopGraph;
         public readonly TwoGraph WholeGenes;
         private int _t;
 
@@ -41,7 +42,7 @@ namespace Village.Agents
             PopGraph = new Graph {Color = Color.Purple};
             Genes = new TwoGraph {Color1 = Color.DeepSkyBlue,Color2 = Color.Green};
 
-            WholeFoodGraph = new Graph { PointCount = 1000000 };
+            WholeFoodGraph = new Graph { PointCount = 1000000};
             WholePopGraph = new Graph { Color = Color.Purple, PointCount = 1000000 };
             WholeGenes = new TwoGraph { Color1 = Color.DeepSkyBlue, Color2 = Color.Green, PointCount = 1000000 };
         }
@@ -96,13 +97,14 @@ namespace Village.Agents
                     }
                 }
             }
-            float a1 = farm / (float) GetAgentList.Count;
-            float a2 = scav / (float) GetAgentList.Count;
-            Genes.AddPoint(a1, a2);
-            WholeGenes.AddPoint(a1, a2);
+            
             if (_t >= 3)
             {
                 _t = 0;
+                float a1 = farm / (float)GetAgentList.Count;
+                float a2 = scav / (float)GetAgentList.Count;
+                Genes.AddPoint(a1, a2);
+                WholeGenes.AddPoint(a1, a2);
                 FoodGraph.AddPoint(GetTotalFood);
                 PopGraph.AddPoint(GetAgentList.Count);
                 WholeFoodGraph.AddPoint(GetTotalFood);
