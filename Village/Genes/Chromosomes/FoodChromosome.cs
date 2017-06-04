@@ -19,7 +19,7 @@ namespace Village.Genes.Chromosomes
             }
         }
 
-        public FoodChromosome(IReadOnlyList<Tuple<Genome, float>> genomes)
+        public FoodChromosome(List<Tuple<Genome, float>> genomes)
         {
             for (int i = 0; i < GeneCount; i++)
             {

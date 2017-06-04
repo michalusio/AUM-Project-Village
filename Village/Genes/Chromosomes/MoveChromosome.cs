@@ -19,7 +19,7 @@ namespace Village.Genes.Chromosomes
             }
         }
 
-        public MoveChromosome(IReadOnlyList<Tuple<Genome, float>> genomes)
+        public MoveChromosome(List<Tuple<Genome, float>> genomes)
         {
             for (int i = 0; i < GeneCount; i++)
             {

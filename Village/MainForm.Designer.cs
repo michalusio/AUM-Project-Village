@@ -86,11 +86,11 @@ namespace Village
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(797, 813);
+            this.button1.Location = new System.Drawing.Point(768, 813);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 36);
+            this.button1.Size = new System.Drawing.Size(104, 36);
             this.button1.TabIndex = 3;
-            this.button1.Text = "RESET";
+            this.button1.Text = "RESET/END";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -131,7 +131,7 @@ namespace Village
             this.label3.TabIndex = 7;
             this.label3.Text = "Aging Speed";
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -148,7 +148,7 @@ namespace Village
             this.DoubleBuffered = true;
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(900, 858);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Village Project";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
