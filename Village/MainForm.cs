@@ -179,7 +179,7 @@ namespace Village
             Board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,20,200,200));
             g.DrawString("Agents in Village: " + Board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 264);
             Board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 284, 200, 200));
-            g.DrawString("Scavenge genes in Village:", _fontArial, Brushes.BlueViolet, 0, 508);
+            g.DrawString("Genes in Village:", _fontArial, Brushes.BlueViolet, 0, 508);
             Board.GetVillage().Genes.Plot(g, new Rectangle(0, 528, 200, 100));
         }
 
