@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -101,8 +102,8 @@ namespace Village.Agents
             if (_t >= 3)
             {
                 _t = 0;
-                float a1 = farm / (float)GetAgentList.Count;
-                float a2 = scav / (float)GetAgentList.Count;
+                float a1 = farm / (float)Math.Max(GetAgentList.Count,1);
+                float a2 = scav / (float)Math.Max(GetAgentList.Count, 1);
                 Genes.AddPoint(a1, a2);
                 WholeGenes.AddPoint(a1, a2);
                 FoodGraph.AddPoint(GetTotalFood);
