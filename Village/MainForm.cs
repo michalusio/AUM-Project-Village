@@ -20,6 +20,7 @@ namespace Village
         private int _sizeRect;
         private float _zoom;
         private Agent _selectedAgent;
+        private Agents.Village _selectedVillage;
         private int _tick;
         private readonly Font _fontArial = new Font("Arial Black", 10);
 
@@ -61,7 +62,7 @@ namespace Village
             _carrots[4] = Image.FromFile("textures/Carrot_4.png");
 
             _holdCarrot = Image.FromFile("textures/Carrot_5.png");
-            Board = new Board(100, 100, new PointF(50,50));
+            Board = new Board(200, 200);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -93,12 +94,15 @@ namespace Village
 
         private void TickGame()
         {
-            Board.GetVillage().TickFood();
-            Board.GetVillage().TickAge(agingSpeed.Value/5f);
-            Board.GetVillage().ReproduceAgents();
-            foreach (var agent in Board.GetVillage().GetAgentList)
+            foreach (var v in Board.GetVillages())
             {
-                agent.DoAction();
+                v.TickFood();
+                v.TickAge(agingSpeed.Value / 5f);
+                v.ReproduceAgents();
+                foreach (var agent in v.GetAgentList)
+                {
+                    agent.DoAction();
+                }
             }
             for (int i = 0; i < GRASS_GROWTH * Board.FullBoard.Length / (60 * 60); i++)
             {
@@ -107,11 +111,11 @@ namespace Village
                 var f = Board.FullBoard[x, y];
                 if (f.GetGrass() < 0.99f && IsNearGrass(f))
                 {
-                    f.AddCultivation(grassGrowth.Value/20f);
+                    f.AddCultivation(grassGrowth.Value / 20f);
                 }
                 else
                 {
-                    if (f.GetGrass()>0.25f) f.AddCultivation(grassGrowth.Value/60f);
+                    if (f.GetGrass() > 0.25f) f.AddCultivation(grassGrowth.Value / 60f);
                 }
             }
         }
@@ -138,7 +142,7 @@ namespace Village
                         (i * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
                         (j * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
                 g.FillRectangle(
-                    f.GetBase()?Brushes.Black : new SolidBrush(InterpolateColor(Color.SaddleBrown, Color.Green, f.GetGrass())),
+                    f.GetBase()>-1?Board.GetVillages()[f.GetBase()].GetBrush() : new SolidBrush(InterpolateColor(Color.SaddleBrown, Color.Green, f.GetGrass())),
                     new RectangleF(p.X, p.Y, s.Width, s.Height));
                 if (f.GetFood().Value > 0)
                 {
@@ -146,23 +150,28 @@ namespace Village
                     g.DrawImage(tab[(i*Board.FullBoard.GetLength(0)+j)% tab.Length], new RectangleF(p.X, p.Y, s.Width,s.Height));
                 }
             }
-
-            foreach (var agent in Board.GetVillage().GetAgentList)
+            foreach (var v in Board.GetVillages())
             {
-                PointF p = new PointF(
-                    (agent.GetCurrentX * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
-                    (agent.GetCurrentY * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
-                g.FillEllipse(new SolidBrush(InterpolateColor(Color.Aqua,Color.DarkBlue,agent.GetAge/agent.GetGenome().GetDurability())),
-                    p.X, p.Y,
-                    s.Width,
-                    s.Height);
-                if (agent.GetHoldedFood > 0)
+                foreach (var agent in v.GetAgentList)
                 {
-                    g.DrawImage(
-                        agent.GetHoldedType == 1
-                            ? _cabbages[Math.Abs(agent.GetHashCode()) % _cabbages.Length]
-                            : _holdCarrot,
-                        new RectangleF(p.X, p.Y, s.Width * 0.75f, s.Height * 0.75f));
+                    PointF p = new PointF(
+                        (agent.GetCurrentX * _sizeRect - _camera.X) * _zoom + area.Width * 0.5f,
+                        (agent.GetCurrentY * _sizeRect - _camera.Y) * _zoom + area.Height * 0.5f);
+                    g.FillEllipse(
+                        new SolidBrush(InterpolateColor(Color.White, Color.Black,
+                            agent.GetAge / agent.GetGenome().GetDurability())),
+                        p.X, p.Y,
+                        s.Width,
+                        s.Height);
+                    g.FillEllipse(v.Brush, p.X +_sizeRect*_zoom*0.1f, p.Y + _sizeRect * _zoom * 0.1f, s.Width - _sizeRect * _zoom * 0.2f, s.Height - _sizeRect * _zoom * 0.2f);
+                    if (agent.GetHoldedFood > 0)
+                    {
+                        g.DrawImage(
+                            agent.GetHoldedType == 1
+                                ? _cabbages[Math.Abs(agent.GetHashCode()) % _cabbages.Length]
+                                : _holdCarrot,
+                            new RectangleF(p.X, p.Y, s.Width * 0.75f, s.Height * 0.75f));
+                    }
                 }
             }
             if (_selectedAgent != null)
@@ -173,14 +182,22 @@ namespace Village
                     s.Width,
                     s.Height);
             }
-            g.FillRectangle(Brushes.Bisque, 0,0,199,628);
-            g.DrawString("Food in Village: "+Board.GetVillage().GetTotalFood.ToString("F1"),_fontArial, Brushes.BlueViolet,0,0);
-            if (_selectedAgent != null) DrawAgentDescription(g,area);
-            Board.GetVillage().FoodGraph.Plot(g,new Rectangle(0,20,200,200));
-            g.DrawString("Agents in Village: " + Board.GetVillage().GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 264);
-            Board.GetVillage().PopGraph.Plot(g, new Rectangle(0, 284, 200, 200));
+            if (_selectedVillage != null)
+            {
+                DrawVillage(g, _selectedVillage, area);
+            }
+        }
+
+        private void DrawVillage(Graphics g, Agents.Village v, Rectangle area)
+        {
+            g.FillRectangle(Brushes.Bisque, 0, 0, 199, 628);
+            g.DrawString("Food in Village: " + v.GetTotalFood.ToString("F1"), _fontArial, Brushes.BlueViolet, 0, 0);
+            if (_selectedAgent != null) DrawAgentDescription(g, area);
+            v.FoodGraph.Plot(g, new Rectangle(0, 20, 200, 200));
+            g.DrawString("Agents in Village: " + v.GetAgentList.Count, _fontArial, Brushes.BlueViolet, 0, 264);
+            v.PopGraph.Plot(g, new Rectangle(0, 284, 200, 200));
             g.DrawString("Genes in Village:", _fontArial, Brushes.BlueViolet, 0, 508);
-            Board.GetVillage().Genes.Plot(g, new Rectangle(0, 528, 200, 100));
+            v.Genes.Plot(g, new Rectangle(0, 528, 200, 100));
         }
 
         private Color InterpolateColor(Color a, Color b, float t)
@@ -212,20 +229,79 @@ namespace Village
 
         private void ui_MouseClick(object sender, MouseEventArgs e)
         {
-            float realX = ((e.X - ui.Width * 0.5f) / _zoom + _camera.X) / _sizeRect;
-            float realY = ((e.Y - ui.Height * 0.5f) / _zoom + _camera.Y) / _sizeRect;
-            Agent a = null;
-            float minD = float.MaxValue;
-            foreach (var agent in Board.GetVillage().GetAgentList)
+            if (e.Button == MouseButtons.Left)
             {
-                float d = Extensions.Sqr(agent.GetCurrentX - realX) + Extensions.Sqr(agent.GetCurrentY - realY);
-                if (d < 5 && d < minD)
+                float realX = ((e.X - ui.Width * 0.5f) / _zoom + _camera.X) / _sizeRect;
+                float realY = ((e.Y - ui.Height * 0.5f) / _zoom + _camera.Y) / _sizeRect;
+                object a = null;
+                float minD = float.MaxValue;
+                foreach (var v in Board.GetVillages())
                 {
-                    minD = d;
-                    a = agent;
+                    float d = Extensions.Sqr(v.VillageMain.X - realX) + Extensions.Sqr(v.VillageMain.Y - realY);
+                    if (d < 5 && d < minD)
+                    {
+                        minD = d;
+                        a = v;
+                    }
+                    foreach (var agent in v.GetAgentList)
+                    {
+                        d = Extensions.Sqr(agent.GetCurrentX - realX) + Extensions.Sqr(agent.GetCurrentY - realY);
+                        if (d < 5 && d < minD)
+                        {
+                            minD = d;
+                            a = agent;
+                        }
+                    }
+                }
+                if (_selectedAgent != null && a is Agents.Village)
+                {
+                    _selectedVillage = (Agents.Village) a;
+                }
+                else
+                {
+                    if (_selectedVillage != null && a is Agent)
+                    {
+                        _selectedAgent = (Agent) a;
+                    }
+                    else
+                    {
+                        if (_selectedAgent == null && _selectedVillage == null)
+                        {
+                            _selectedAgent = a as Agent;
+                            _selectedVillage = a as Agents.Village;
+                        } 
+                    }
                 }
             }
-            _selectedAgent = a;
+            if (e.Button == MouseButtons.Middle)
+            {
+                float realX = ((e.X - ui.Width * 0.5f) / _zoom + _camera.X) / _sizeRect;
+                float realY = ((e.Y - ui.Height * 0.5f) / _zoom + _camera.Y) / _sizeRect;
+                int x = (int) realX;
+                int y = (int) realY;
+                if (VillageValid(x, y)&&Board.FullBoard[x,y].GetBase()==-1)
+                {
+                    Agents.Village v = new Agents.Village(Board,new PointF(x,y));
+                    int cv = Board.GetVillages().Count;
+                    Board.FullBoard[x, y].SetBase(cv);
+                    Board.FullBoard[x-1, y].SetBase(cv);
+                    Board.FullBoard[x+1, y].SetBase(cv);
+                    Board.FullBoard[x, y-1].SetBase(cv);
+                    Board.FullBoard[x, y+1].SetBase(cv);
+                    Board.GetVillages().Add(v);
+                    for (int i = 0; i < Board.GetVillages().Count; i++)
+                    {
+                        v = Board.GetVillages()[i];
+                        v.Brush=new SolidBrush(Extensions.HsvToRgb((360*i)/(float)Board.GetVillages().Count,1,1));
+                    }
+                }
+            }
+        }
+
+        private bool VillageValid(int x, int y)
+        {
+            return Board.IsValid(x, y) && Board.IsValid(x - 1, y) && Board.IsValid(x + 1, y) && Board.IsValid(x, y - 1) &&
+                   Board.IsValid(x, y + 1);
         }
 
         private void DrawAgentDescription(Graphics g, Rectangle area)

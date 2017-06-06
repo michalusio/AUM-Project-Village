@@ -19,11 +19,11 @@ namespace Village
             Graphics g = e.Graphics;
             var third = e.ClipRectangle.Height / 3;
             var w = 100000;
-            var graph = F.Board.GetVillage().WholeFoodGraph;
+            var graph = F.Board.GetVillages()[0].WholeFoodGraph;
             graph.Plot(g, new Rectangle(((e.ClipRectangle.Width - w) * hScrollBar1.Value) / 100, 0, w, third));
-            graph = F.Board.GetVillage().WholePopGraph;
+            graph = F.Board.GetVillages()[0].WholePopGraph;
             graph.Plot(g, new Rectangle(((e.ClipRectangle.Width - w) * hScrollBar1.Value) / 100, third, w, third));
-            var graph2 = F.Board.GetVillage().WholeGenes;
+            var graph2 = F.Board.GetVillages()[0].WholeGenes;
             graph2.Plot(g, new Rectangle(((e.ClipRectangle.Width - w) * hScrollBar1.Value) / 100, third*2, w, third));
         }
 
@@ -34,7 +34,7 @@ namespace Village
 
         private void GraphForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            F.Board = new Board(100, 100, new PointF(50, 50));
+            F.Board = new Board(100, 100);
             F.Graphs = new GraphForm {F = F};
         }
     }

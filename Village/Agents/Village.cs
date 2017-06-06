@@ -19,6 +19,7 @@ namespace Village.Agents
 
 
         public PointF VillageMain;
+        public Brush Brush;
         public readonly Graph FoodGraph;
         public readonly Graph PopGraph;
         public readonly TwoGraph Genes;
@@ -121,6 +122,11 @@ namespace Village.Agents
                 GetAgentList.Add(new Agent(_board, this));
                 GetTotalFood -= REQUIRED_FOOD;
             }
+        }
+
+        public Brush GetBrush()
+        {
+            return Brush;
         }
     }
 }

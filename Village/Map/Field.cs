@@ -5,14 +5,14 @@ namespace Village.Map
     public class Field
     {
         private float _cultivation; // czy uprawa jest możliwa
-        private readonly bool _base; // czy to pole wioski
+        private int _base; // czy to pole wioski
         private Food _food; //
 
         public int X, Y;
 
         public readonly Board Board;
 
-        public Field(Board b, bool cultivation, bool _base, float foodValue)
+        public Field(Board b, bool cultivation, int _base, float foodValue)
         {
             Board = b;
             this._base = _base;
@@ -20,11 +20,11 @@ namespace Village.Map
             _food = new Food(foodValue, null);
         }
 
-        public Field(Board b, bool cultivation, bool _base) : this(b, cultivation, _base, 0)
+        public Field(Board b, bool cultivation, int _base) : this(b, cultivation, _base, 0)
         {
         }
 
-        public bool GetBase()
+        public int GetBase()
         {
             return _base;
         }
@@ -71,6 +71,11 @@ namespace Village.Map
         public void AddCultivation(float f)
         {
             _cultivation = Math.Min(1, _cultivation + f);
+        }
+
+        public void SetBase(int cv)
+        {
+            _base = cv;
         }
     }
 }

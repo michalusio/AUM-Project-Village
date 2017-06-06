@@ -40,7 +40,7 @@ namespace Village.Genes.Chromosomes.FoodFunctions
                     }
                 }
                 aList.AddAction(new Action(ActionType.PickingUpFood, nearestField));
-                aList.AddAction(new Action(ActionType.ReturningFood, b.FullBoard[(int)b.GetVillage().VillageMain.X, (int)b.GetVillage().VillageMain.Y]));
+                aList.AddAction(new Action(ActionType.ReturningFood, b.FullBoard[(int)a.GetVillage().VillageMain.X, (int)a.GetVillage().VillageMain.Y]));
             }
             else
             {

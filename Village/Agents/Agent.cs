@@ -84,7 +84,7 @@ namespace Village.Agents
                         break;
                     case ActionType.PickingUpFood:
                         float foodTaken = Math.Min(_genome.GetStrength()-GetHoldedFood,GetField().GetFood().Value);
-                        if (GetField().GetFood().Farmer != null)
+                        if (GetField().GetFood().Farmer != null && GetField().GetFood().Farmer.GetVillage()==GetVillage())
                         {
                             GetField().GetFood().Farmer.GetFood += foodTaken;
                         }
@@ -134,6 +134,11 @@ namespace Village.Agents
         public Genome GetGenome()
         {
             return _genome;
+        }
+
+        public Village GetVillage()
+        {
+            return _village;
         }
     }
 }
